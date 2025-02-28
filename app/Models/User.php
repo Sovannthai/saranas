@@ -19,6 +19,19 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $guarded = [];
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        if (!empty($this->image)) {
+            $image_url = asset('/uploads/all_photo' . rawurlencode($this->image));
+        } else {
+            $image_url = asset('/uploads/default-image.jpg');
+        }
+        return $image_url;
+    }
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,20 +54,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    protected $appends = ['image_url'];
-    protected function generateImageUrl($imageName)
-    {
-        if (!empty($imageName)) {
-            return asset('uploads/all_photo/' . rawurlencode($imageName));
-        } else {
-            return null;
-        }
-    }
-    public function getImageUrlAttribute()
-    {
-        return $this->generateImageUrl($this->image);
     }
     public function messages()
     {
