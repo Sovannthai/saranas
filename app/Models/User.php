@@ -24,7 +24,7 @@ class User extends Authenticatable
     public function getImageUrlAttribute()
     {
         if (!empty($this->image)) {
-            $image_url = asset('/uploads/all_photo' . rawurlencode($this->image));
+            $image_url = asset('/uploads/all_photo/' . rawurlencode($this->image));
         } else {
             $image_url = asset('/uploads/default-image.jpg');
         }
