@@ -178,17 +178,17 @@
                         <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                         <span>@lang('Remember me')</span>
                     </label>
-                    <a href="#">@lang('Forgot password')?</a>
+                    {{-- <a href="#">@lang('Forgot password')?</a> --}}
                 </div>
                 <button type="submit">@lang('Login')</button>
 
                 <div class="register">
-                    <p>@lang("Don't have an account")? <a href="{{ route('register') }}">@lang('Register')</a></p>
+                    {{-- <p>@lang("Don't have an account")? <a href="{{ route('register') }}">@lang('Register')</a></p> --}}
                 </div>
             </form>
             <script async src="https://telegram.org/js/telegram-widget.js?7" data-telegram-login="NotificatonServiceLogin887_bot"
-                data-size="large" data-auth-url="{{ route('telegram_callback') }}" data-request-access="write"></script>
-            <script type="text/javascript">
+                data-size="large" data-auth-url="https://saranas.darong.site/auth/telegram/callback" data-request-access="write"></script>
+            {{-- <script type="text/javascript">
                 function onTelegramAuth(user) {
                     fetch('{{ route('telegram_callback') }}', {
                             method: 'GET',
@@ -210,7 +210,7 @@
                             console.error('Error:', error);
                         });
                 }
-            </script>
+            </script> --}}
         </div>
     </div>
 

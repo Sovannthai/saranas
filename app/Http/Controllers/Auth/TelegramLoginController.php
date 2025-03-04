@@ -61,7 +61,7 @@ class TelegramLoginController extends Controller
                 ->notify(new TelegramNotification());
             return view('auth.telegram_confirm_login', compact('telegram_user'));
         }
-    }
+    }   
     public function webhook(Request $request)
     {
         Log::info($request->all());
