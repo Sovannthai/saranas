@@ -19,32 +19,34 @@ class TelegramLoginController extends Controller
 {
     public function telegramLogin(Request $request)
     {
-        $user = User::updateOrCreate(
-            [
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $user->update([
                 'phone' => $request->phone,
                 'telegram_id' => $request->telegram_id
-            ],
-            [
-                'name' => $request->name,
-                'username' => '@' . $request->username,
-                'avatar' => $request->avatar,
-                'access_token' => $request->hash,
-                'password' => bcrypt($request->email),
-                'phone' => $request->email,
-                'user_type' => 'login_with_telegram',
-                'email' => $request->email,
-            ]
-        );
-        if ($user->wasRecentlyCreated) {
+            ]);
+        } else {
+            $user = new User();
+            $user->name = $request->name;
+            $user->username = '@' . $request->username;
+            $user->avatar = $request->avatar;
+            $user->access_token = $request->hash;
+            $user->password = bcrypt($request->email);
+            $user->phone = $request->email;
+            $user->user_type = 'login_with_telegram';
+            $user->email = $request->email;
+            $user->save();
+
             $role = Role::findOrFail(8);
             $user->assignRole($role->name);
         }
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->email])) {
             return redirect()->route('home');
         } else {
             return response()->json(['message' => 'Login failed.'], 401);
         }
-
     }
     public function telegramAuthCallback(Request $request)
     {
