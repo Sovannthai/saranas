@@ -84,14 +84,14 @@
         });
         //Alert and store message get from telegram bot
         $(document).ready(function() {
-            const audio = new Audio('{{ asset('uploads/sound/success.mp3') }}');
-            audio.load();
+            // const audio = new Audio('{{ asset('uploads/sound/success.mp3') }}');
+            // audio.load();
 
-            function playAudio() {
-                audio.play().catch(function(error) {
-                    console.error('Audio play failed:', error);
-                });
-            }
+            // function playAudio() {
+            //     audio.play().catch(function(error) {
+            //         console.error('Audio play failed:', error);
+            //     });
+            // }
 
             function fetchMessages() {
                 $.ajax({
@@ -123,9 +123,9 @@
                     }
                 });
             }
-            $(window).on('click', function() {
-                playAudio();
-            });
+            // $(window).on('click', function() {
+            //     playAudio();
+            // });
             setInterval(fetchMessages, 2000);
         });
     </script>

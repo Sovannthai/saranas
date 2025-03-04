@@ -61,7 +61,7 @@ class TelegramNotification extends Notification
             ->content('Please share your contact by click button below. Thanks.')
             // ->keyboard('Button 1')
             // ->keyboard('Button 2');
-            ->keyboard('Share your contact', request_contact: true);
+            ->keyboard('Share your contact');
         // ->keyboard('send your location', request_location: true);
     }
 }

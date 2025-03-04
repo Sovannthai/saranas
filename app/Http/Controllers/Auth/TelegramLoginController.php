@@ -19,7 +19,6 @@ class TelegramLoginController extends Controller
 {
     public function telegramLogin(Request $request)
     {
-        Log::info($request->all());
         $user = User::updateOrCreate(
             [
                 'phone' => $request->phone,
