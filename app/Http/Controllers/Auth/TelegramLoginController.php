@@ -19,34 +19,33 @@ class TelegramLoginController extends Controller
 {
     public function telegramLogin(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
-
-        if ($user) {
-            $user->update([
+        Log::info($request->all());
+        $user = User::updateOrCreate(
+            [
                 'phone' => $request->phone,
                 'telegram_id' => $request->telegram_id
-            ]);
-        } else {
-            $user = new User();
-            $user->name = $request->name;
-            $user->username = '@' . $request->username;
-            $user->avatar = $request->avatar;
-            $user->access_token = $request->hash;
-            $user->password = bcrypt($request->email);
-            $user->phone = $request->email;
-            $user->user_type = 'login_with_telegram';
-            $user->email = $request->email;
-            $user->save();
-
+            ],
+            [
+                'name' => $request->name,
+                'username' => '@' . $request->username,
+                'avatar' => $request->avatar,
+                'access_token' => $request->hash,
+                'password' => bcrypt($request->email),
+                'phone' => $request->email,
+                'user_type' => 'login_with_telegram',
+                'email' => $request->email,
+            ]
+        );
+        if ($user->wasRecentlyCreated) {
             $role = Role::findOrFail(8);
             $user->assignRole($role->name);
         }
-
         if (Auth::attempt(['email' => $request->email, 'password' => $request->email])) {
             return redirect()->route('home');
         } else {
             return response()->json(['message' => 'Login failed.'], 401);
         }
+
     }
     public function telegramAuthCallback(Request $request)
     {
@@ -63,7 +62,7 @@ class TelegramLoginController extends Controller
                 ->notify(new TelegramNotification());
             return view('auth.telegram_confirm_login', compact('telegram_user'));
         }
-    }   
+    }
     public function webhook(Request $request)
     {
         Log::info($request->all());
@@ -88,4 +87,3 @@ class TelegramLoginController extends Controller
     }
 
 }
-
