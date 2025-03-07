@@ -5,20 +5,20 @@
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('uploads/all_photo/' . session('web_logo')) }}" type="image/x-icon" /
         >
-    <meta name="description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
+       <meta name="description" content="Browse and find affordable rooms for rent with ease. Explore trusted listings and book your perfect stay today.">
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Room Rental - Find Your Perfect Room">
-    <meta property="og:description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
-    <meta property="og:image" content="https://roomrental.store/path-to-your-thumbnail.jpg">
+    <!-- Open Graph Meta Tags for Social Media Preview -->
+    <meta property="og:title" content="Room Rental Store - Find and Rent Rooms Easily">
+    <meta property="og:description" content="Browse and find affordable rooms for rent with ease. Explore trusted listings and book your perfect stay today.">
+    <meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9aQaQ1vuL8ak_r7gNJLM2tjrYKCJjkThphg&s">
     <meta property="og:url" content="https://roomrental.store/">
     <meta property="og:type" content="website">
 
-    <!-- Optional Twitter Card (for Twitter sharing) -->
+    <!-- Twitter Card Tags (Optional for Twitter Sharing) -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Room Rental - Find Your Perfect Room">
-    <meta name="twitter:description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
-    <meta name="twitter:image" content="https://roomrental.store/path-to-your-thumbnail.jpg">
+    <meta name="twitter:title" content="Room Rental Store - Find and Rent Rooms Easily">
+    <meta name="twitter:description" content="Browse and find affordable rooms for rent with ease. Explore trusted listings and book your perfect stay today.">
+    <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9aQaQ1vuL8ak_r7gNJLM2tjrYKCJjkThphg&s">
     <link rel="stylesheet" href="{{ asset('backends/assets/css/app.css') }}" />
     <!-- Fonts and icons -->
     <script src="{{ asset('backends/assets/js/plugin/webfont/webfont.min.js') }}"></script>
