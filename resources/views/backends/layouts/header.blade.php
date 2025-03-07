@@ -3,7 +3,22 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" href="{{ asset('uploads/all_photo/' . session('web_logo')) }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('uploads/all_photo/' . session('web_logo')) }}" type="image/x-icon" /
+        >
+    <meta name="description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Room Rental - Find Your Perfect Room">
+    <meta property="og:description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
+    <meta property="og:image" content="https://roomrental.store/path-to-your-thumbnail.jpg">
+    <meta property="og:url" content="https://roomrental.store/">
+    <meta property="og:type" content="website">
+
+    <!-- Optional Twitter Card (for Twitter sharing) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Room Rental - Find Your Perfect Room">
+    <meta name="twitter:description" content="Explore affordable rooms for rent. Easy booking, trusted listings, and hassle-free process.">
+    <meta name="twitter:image" content="https://roomrental.store/path-to-your-thumbnail.jpg">
     <link rel="stylesheet" href="{{ asset('backends/assets/css/app.css') }}" />
     <!-- Fonts and icons -->
     <script src="{{ asset('backends/assets/js/plugin/webfont/webfont.min.js') }}"></script>
