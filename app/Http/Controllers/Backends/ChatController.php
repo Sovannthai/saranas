@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backends;
 
 use App\Models\Chat;
+use App\Models\User;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Events\MessageReceived;
@@ -14,35 +15,22 @@ class ChatController extends Controller
 {
     public function chatIndex()
     {
-        $row_chats = Message::select('messages.user_id', 'messages.first_name', 'messages.username', 'users.avatar')
+        $row_chats   = Message::select('messages.user_id', 'messages.first_name', 'messages.username', 'users.avatar')
             ->join('users', 'users.telegram_id', '=', 'messages.user_id')
             ->groupBy('messages.user_id', 'messages.first_name', 'messages.username', 'users.avatar')
             ->get();
-        return view('backends.chat.index', compact('row_chats',));
+        $users        = User::all(); 
+        return view('backends.chat.index', compact('row_chats','users'));
     }
-    public function chatDetail($id)
+    public function chatDetailByUser($id)
     {
-        $chateDeatail = Message::findOrFail($id);
-        return view('backends.chat.layout.sidebar', compact('chateDeatail'));
+        $chatDetail = Chat::where('user_id', $id)->get();
+        return view('backends.chat.layout.body', compact('chatDetail'));
     }
-    // public function fetchMessages()
-    // {
-    //     $token       = '6892001713:AAEFqGqO4bqaQmNx465sQxV-Z6Cq-HHQCsw';
-    //     $url         = 'https://api.telegram.org/bot' . $token . '/getUpdates';
-    //     $response    = Http::get($url, [
-    //         'offset' => $this->getLastUpdateId() + 1,
-    //     ]);
+    
 
-    //     $updates     = $response->json();
 
-    //     if (isset($updates['result']) && is_array($updates['result'])) {
-    //         foreach ($updates['result'] as $update) {
-    //             if (isset($update['message'])) {
-    //                 $this->storeIncomingMessage($update);
-    //             }
-    //         }
-    //     }
-    // }
+    // Below code is using for telegram send message
     public function fetchMessages()
     {
         $token = '6892001713:AAEFqGqO4bqaQmNx465sQxV-Z6Cq-HHQCsw';

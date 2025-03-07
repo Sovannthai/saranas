@@ -148,15 +148,27 @@ class UserContractController extends Controller
             if (!empty($userContract->contract_image) && file_exists($imagePath)) {
                 unlink($imagePath);
             }
+            $userContract->payments()->first();
+            if ($userContract->payments()->first()) {
+                $output = [
+                    'error' => 'This contract has payments.'
+                ];
+                return redirect()->back()->with($output);
+            }
             $userContract->delete();
             Room::where('id', $userContract->room_id)->update([
                 'status' => 'available',
             ]);
-            return redirect()->back()->with('success', 'User contract deleted successfully.');
+            $output = [
+                'success' => 'User contract deleted successfully.'
+            ];
+            return redirect()->back()->with($output);
 
         } catch (Exception $e) {
-            dd($e);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while deleting the contract.'])->withInput();
+            $output = [
+                'error' => 'An error occurred while deleting the contract.'
+            ];
+            return redirect()->back()->with($output);
         }
     }
 

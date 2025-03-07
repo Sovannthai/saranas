@@ -76,38 +76,38 @@ class RoleController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $this->validate($request, [
-        'name' => 'required|unique:roles,name,' . $id,
-        // Uncomment this if you want to validate description
-        // 'description' => 'sometimes|string|max:255',
-    ]);
+    {
+        $this->validate($request, [
+            'name' => 'required|unique:roles,name,' . $id,
+            // Uncomment this if you want to validate description
+            // 'description' => 'sometimes|string|max:255',
+        ]);
 
-    $roleName = $request->input('name');
-    $roleDescription = $request->input('description');
-    $permissions = $request->input('permissions', []);
+        $roleName = $request->input('name');
+        $roleDescription = $request->input('description');
+        $permissions = $request->input('permissions', []);
 
-    $role = Role::findOrFail($id);
-    $role->name = $roleName;
-    $role->description = $roleDescription;
-    $role->save();
+        $role = Role::findOrFail($id);
+        $role->name = $roleName;
+        $role->description = $roleDescription;
+        $role->save();
 
-    if (!empty($permissions)) {
-        $validPermissions = Permission::whereIn('name', $permissions)->get();
+        if (!empty($permissions)) {
+            $validPermissions = Permission::whereIn('name', $permissions)->get();
 
-        if ($validPermissions->count() != count($permissions)) {
-            $notFoundPermissions = array_diff($permissions, $validPermissions->pluck('name')->toArray());
-            return redirect()->back()->withErrors(['permissions' => 'Invalid permissions: ' . implode(', ', $notFoundPermissions)]);
+            if ($validPermissions->count() != count($permissions)) {
+                $notFoundPermissions = array_diff($permissions, $validPermissions->pluck('name')->toArray());
+                return redirect()->back()->withErrors(['permissions' => 'Invalid permissions: ' . implode(', ', $notFoundPermissions)]);
+            }
+
+            $role->syncPermissions($validPermissions);
+        } else {
+            $role->syncPermissions([]);
         }
 
-        $role->syncPermissions($validPermissions);
-    } else {
-        $role->syncPermissions([]);
+        Session::flash('success', __('Role Updated successfully!'));
+        return redirect()->route('roles.index');
     }
-
-    Session::flash('success', __('Role Updated successfully!'));
-    return redirect()->route('roles.index');
-}
 
     public function show($id)
     {
@@ -125,6 +125,13 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
         $role->revokePermissionTo($role->permissions);
+        $existingUsers = $role->users;
+        if ($existingUsers->count() > 0) {
+            $output = [
+                'error' => 'This role is assigned to ' . $existingUsers->count() . ' user(s). Please reassign them before deleting this role.',
+            ];
+            return redirect()->back()->with($output);
+        }
         $role->delete();
         Session::flash('success', __('Role Deleted successfully!'));
         return redirect('roles');

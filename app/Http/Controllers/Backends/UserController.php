@@ -184,12 +184,18 @@ class UserController extends Controller
     {
         try {
             $user = User::find($id);
+            $user->userContracts()->first();
+            if ($user->userContracts()->first()) {
+                $output = [
+                    'error' =>__('This user has a contract')
+                ];
+                return redirect()->route('users.index')->with($output);
+            }
             $user->delete();
             $photoPath = public_path('uploads/all_photo/' . $user->photo);
             if (!empty($user->photo) && file_exists($photoPath)) {
                 unlink($photoPath);
             }
-            DB::commit();
             $output = [
                 'success' =>__('Deleted successfully')
             ];

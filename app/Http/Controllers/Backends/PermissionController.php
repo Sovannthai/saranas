@@ -111,6 +111,14 @@ class PermissionController extends Controller
     {
         try {
             $permission = Permission::findOrFail($id);
+            $existingRoles = $permission->roles;
+            if ($existingRoles->count() > 0) {
+                $roleNames = $existingRoles->pluck('name')->toArray();
+                $output = [
+                    'error' => 'Permission is being used by roles: ' . implode(', ', $roleNames),
+                ];
+                return redirect()->back()->with($output);
+            }
             $permission->delete();
             Session::flash('success', __('Permission deleted successfully.'));
         } catch (\Exception $e) {

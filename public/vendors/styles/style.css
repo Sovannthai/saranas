@@ -4287,12 +4287,17 @@ body.IE .register-page-wrap .container {
 
 .chat-footer {
     height: 86px;
-    border-top: 1px solid #eff0f4
+    border-top: 1px solid #eff0f4;
+    position: fixed;
+	bottom: 55px;
+	width: 100%;
 }
 
 .chat-footer .file-upload {
     float: left;
-    width: 55px
+    width: 55px;
+    height: 100px;
+    background: #fff;
 }
 
 .chat-footer .file-upload a {
@@ -4319,8 +4324,9 @@ body.IE .register-page-wrap .container {
 }
 
 .chat-footer .chat_send {
-    float: right;
-    width: 90px
+    right: 0;
+    width: 90px;
+    position: fixed;
 }
 
 .chat-footer .chat_send .btn {
@@ -4331,7 +4337,7 @@ body.IE .register-page-wrap .container {
     color: #44aeff;
     text-decoration: none;
     font-weight: 900;
-    padding: 25px 10px 5px
+    padding: 25px 10px;
 }
 
 .chat-box .chat-desc ul li.upload-file.admin_chat .upload-file-box .right {

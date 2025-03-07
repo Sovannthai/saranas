@@ -4,6 +4,7 @@
     <title>@yield('title')</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('uploads/all_photo/' . session('web_logo')) }}" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ asset('backends/assets/css/app.css') }}" />
     <!-- Fonts and icons -->
     <script src="{{ asset('backends/assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>

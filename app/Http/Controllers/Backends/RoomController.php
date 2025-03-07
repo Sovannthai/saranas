@@ -116,6 +116,11 @@ class RoomController extends Controller
     {
         try {
             $room = Room::findOrFail($id);
+            $existingContracts = $room->userContracts()->count();
+            if ($existingContracts > 0) {
+                Session::flash('error', __('Cannot delete room with existing contracts.'));
+                return redirect()->route('rooms.index');
+            }
             $room->delete();
             Session::flash('success', __('Room deleted successfully.'));
         } catch (\Exception $e) {

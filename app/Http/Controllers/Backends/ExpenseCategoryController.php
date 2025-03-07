@@ -46,6 +46,13 @@ class ExpenseCategoryController extends Controller
     {
         try {
             $expenseCategory = ExpenseCategory::findOrFail($id);
+            $expenseCategories = $expenseCategory->transactions()->count();
+            if ($expenseCategories > 0) {
+                $output = [
+                    'error'=> ('This expense category has transactions. Please delete them first.'),
+                ];
+                return redirect()->route('expense_categories.index')->with($output);
+            }
             $expenseCategory->delete();
 
             Session::flash('success', __('Expense category deleted successfully.'));

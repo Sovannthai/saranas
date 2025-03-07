@@ -121,6 +121,13 @@ class AmenityController extends Controller
     {
         try {
             $amenity = Amenity::findOrFail($id);
+            $existingRooms = $amenity->rooms()->count();
+            if ($existingRooms > 0) {
+                $output = [
+                    'error' => 'Amenity is being used by rooms',
+                ];
+                return redirect()->back()->with($output);
+            }
             $amenity->delete();
             Session::flash('success', __('Amenity deleted successfully.'));
         } catch (\Exception $e) {

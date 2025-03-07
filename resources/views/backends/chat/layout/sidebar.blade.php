@@ -2,6 +2,9 @@
     .sidbar-chat {
         height: calc(100vh - 200px);
     }
+    .text-light-red{
+        color: red;
+    }
 </style>
 <div class="col-lg-3 col-md-4 col-sm-12 sidbar-chat">
     <div class="chat-list bg-light-gray">
@@ -11,13 +14,17 @@
         </div>
         <div class="notification-list chat-notification-list customscroll">
             <ul>
-                @foreach ($row_chats as $row)
+                @foreach ($users as $row)
                     <li>
                         <a href="#">
-                            <img src="{{ $row->avatar }}" alt="" />
+                            <img src="{{ $row->avatar ?? asset('uploads/all_photo/' .$row->image) }}" alt="" />
                             <h3 class="clearfix">{{ $row->first_name }}</h3>
                             <p>
-                                <i class="fa fa-circle text-light-green"></i> online
+                                @if($row->is_online == 1)
+                                    <i class="fa fa-circle text-light-green"></i> online
+                                @else
+                                    <i class="fa fa-circle text-light-red"></i> offline
+                                @endif
                             </p>
                         </a>
                     </li>

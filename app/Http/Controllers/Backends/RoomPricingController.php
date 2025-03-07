@@ -98,7 +98,15 @@ class RoomPricingController extends Controller
     }
     public function destroy($id){
         try{
-            RoomPricing::destroy($id);
+            $room_pricing = RoomPricing::findOrFail($id);
+            $existingRoom = $room_pricing->room()->count();
+            if($existingRoom){
+                $data =[
+                    'error'=>'Room pricing is already used'
+                ];
+                return redirect()->route('room-prices.index')->with($data);
+            }
+            $room_pricing->delete();
             $data =[
                'success'=>'Room pricing deleted successfully'
             ];

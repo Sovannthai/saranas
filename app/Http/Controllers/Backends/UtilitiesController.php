@@ -93,6 +93,10 @@ class UtilitiesController extends Controller
     public function destroyRate($id)
     {
         $utilityRate = UtilityRate::findOrFail($id);
+        $utilityTypeRatesCount = UtilityRate::where('utility_type_id', $utilityRate->utility_type_id)->count();
+        if ($utilityTypeRatesCount <= 1) {
+            return redirect()->route('utilities.index')->with('error', 'Cannot delete the only rate for this utility type.');
+        }
         $utilityRate->delete();
         return redirect()->route('utilities.index')->with('success', 'Utility Rate deleted successfully.');
     }

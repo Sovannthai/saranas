@@ -70,8 +70,8 @@
             }
 
             /* .card{
-                                    border-radius: 0;
-                                } */
+                                        border-radius: 0;
+                                    } */
             .modal-dialog {
                 border-radius: 0;
             }
@@ -86,8 +86,8 @@
             }
 
             /* .main-chat {
-                    height: calc(100vh - 80px);
-                } */
+                        height: calc(100vh - 80px);
+                    } */
         </style>
     </head>
 

@@ -128,7 +128,6 @@ class MonthlyUsageController extends Controller
         } catch (\Exception $e) {
             Session::flash('error', __('Failed to delete monthly usage.'));
         }
-
         return redirect()->route('monthly_usages.show', $roomId);
     }
 }

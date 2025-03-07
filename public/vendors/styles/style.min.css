@@ -4281,7 +4281,10 @@ body.IE .register-page-wrap .container {
 
 .chat-footer {
     height: 86px;
-    border-top: 1px solid #eff0f4
+    border-top: 1px solid #eff0f4;
+    position: fixed;
+	bottom: 60px;
+	width: 100%;
 }
 
 .chat-footer .file-upload {

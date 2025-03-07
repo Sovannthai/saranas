@@ -54,6 +54,11 @@ class UtilityTypeController extends Controller
     {
         try {
             $utilityType = UtilityType::findOrFail($id);
+            $existingUtility = $utilityType->utilityrates()->count();
+            if ($existingUtility > 0) {
+                Session::flash('error', __('This Utility Type has utilities. Please delete them first.'));
+                return redirect()->route('utilities_type.index');
+            }
             $utilityType->delete();
 
             Session::flash('success', __('Utility Type deleted successfully.'));
