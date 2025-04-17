@@ -45,7 +45,7 @@ class ExpenseCategoryController extends Controller
     public function destroy($id)
     {
         try {
-            $expenseCategory = ExpenseCategory::findOrFail($id);
+            $expenseCategory   = ExpenseCategory::findOrFail($id);
             $expenseCategories = $expenseCategory->transactions()->count();
             if ($expenseCategories > 0) {
                 $output = [

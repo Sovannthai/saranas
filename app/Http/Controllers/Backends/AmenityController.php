@@ -22,8 +22,8 @@ class AmenityController extends Controller
      */
     public function index(CurrencyService $currencyService)
     {
-        if(!auth()->user()->can('view amenity')){
-            abort(403,'Unauthorized action.');
+        if (!auth()->user()->can('view amenity')) {
+            abort(403, 'Unauthorized action.');
         }
 
         $amenities = Amenity::all();
@@ -120,7 +120,7 @@ class AmenityController extends Controller
     public function destroy($id)
     {
         try {
-            $amenity = Amenity::findOrFail($id);
+            $amenity = Amenity::findOrFail($id);s
             $existingRooms = $amenity->rooms()->count();
             if ($existingRooms > 0) {
                 $output = [
@@ -149,8 +149,6 @@ class AmenityController extends Controller
                 'msg' => ('Status update successfully')
             ];
         } catch (Exception $e) {
-            Log::info("message");
-            dd($e);
             $output = [
                 'error' => 0,
                 'msg' => ('Something went wrong')

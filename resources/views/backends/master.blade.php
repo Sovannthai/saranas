@@ -108,7 +108,7 @@
 
                         if (data.success) {
                             if (data.messages && data.messages.length > 0) {
-                                playAudio();
+                                // playAudio();
                                 data.messages.forEach(function(message) {
                                     toastr.info(
                                         `New message from ${message.sender}: ${message.text}`
