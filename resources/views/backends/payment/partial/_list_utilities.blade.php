@@ -173,7 +173,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('delete-advance-utility-payment', '') }}/" + paymentId,
+                        url: "{{ route('delete-advance-utility-payment', ':id') }}".replace(':id', paymentId),
                         type: "POST",
                         data: {
                             _token: "{{ csrf_token() }}",

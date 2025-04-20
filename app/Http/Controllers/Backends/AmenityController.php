@@ -120,7 +120,7 @@ class AmenityController extends Controller
     public function destroy($id)
     {
         try {
-            $amenity = Amenity::findOrFail($id);s
+            $amenity = Amenity::findOrFail($id);
             $existingRooms = $amenity->rooms()->count();
             if ($existingRooms > 0) {
                 $output = [

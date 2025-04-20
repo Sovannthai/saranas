@@ -175,7 +175,7 @@
 
         function fetchRoomPrice(contractId) {
             return $.ajax({
-                url: "{{ route('payments.getRoomPrice', '') }}/" + contractId,
+                url: "{{ route('payments.getRoomPrice', ':id') }}".replace(':id', contractId),
                 type: "GET",
                 dataType: "json",
                 success: function(response) {
@@ -278,12 +278,12 @@
             if (paymentType === 'rent') {
                 $('#amount').prop('disabled', false);
                 if (contractId) {
-                    fetchPrice("{{ route('payments.getRoomPrice', '') }}/" + contractId, paymentType);
+                    fetchPrice("{{ route('payments.getRoomPrice', ':id') }}".replace(':id', contractId), paymentType);
                 }
             } else if (paymentType === 'all_paid' || paymentType === 'utility') {
                 $('#amount').prop('disabled', false);
                 if (contractId) {
-                    fetchPrice("{{ route('payments.getTotalRoomPrice', '') }}/" + contractId,
+                    fetchPrice("{{ route('payments.getTotalRoomPrice', ':id') }}".replace(':id', contractId),
                         paymentType);
                 }
             } else {
@@ -297,9 +297,9 @@
 
             if (contractId) {
                 if (paymentType === 'rent') {
-                    fetchPrice("{{ route('payments.getRoomPrice', '') }}/" + contractId, paymentType);
+                    fetchPrice("{{ route('payments.getRoomPrice', ':id') }}".replace(':id', contractId), paymentType);
                 } else if (paymentType === 'utility' || paymentType === 'all_paid') {
-                    fetchPrice("{{ route('payments.getTotalRoomPrice', '') }}/" + contractId,
+                    fetchPrice("{{ route('payments.getTotalRoomPrice', ':id') }}".replace(':id', contractId),
                         paymentType);
                 }
             }
@@ -341,7 +341,7 @@
 
             if (contractId) {
                 $.ajax({
-                    url: "{{ route('payments.getTotalRoomPrice', '') }}/" + contractId,
+                    url: "{{ route('payments.getTotalRoomPrice', ':id') }}".replace(':id', contractId),
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
