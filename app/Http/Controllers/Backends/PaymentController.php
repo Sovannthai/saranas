@@ -18,11 +18,14 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Lang;
 
 class PaymentController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return all payments
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -69,6 +72,11 @@ class PaymentController extends Controller
         return view('backends.payment.index', compact('rooms','payment_using_for_modals','contracts','users'));
     }
 
+    /**
+     * Get the total room price for a specific contract
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getTotalRoomPrice($id)
     {
         $contract = UserContract::with([
@@ -86,7 +94,6 @@ class PaymentController extends Controller
         $amenity_prices = Amenity::whereIn('id', $amenityIds)->sum('additional_price');
         $total_room_price_before_discount = $room_price_befor_discount + $amenity_prices;
         $amenities = Amenity::whereIn('id', $amenityIds)->get(['id', 'name', 'additional_price']);
-        // dd($amenities);
         $discount = PriceAdjustment::where('room_id', $contract->room_id)->where('status', 'active')->first();
         if (@$discount->discount_type == 'amount') {
             $basePrice = $basePrice - $discount->discount_value;
@@ -136,6 +143,11 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * Get the room price for a specific contract
+     * @param int $contractId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getRoomPrice($contractId)
     {
         $contract = UserContract::with([
@@ -169,6 +181,11 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * Get the total utility amount for a specific contract
+     * @param int $contractId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getUtilityAmount($contractId)
     {
         $contract = UserContract::with([
@@ -211,6 +228,11 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * Get the total amount for a specific contract
+     * @param int $contractId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getTotalAmount($contractId)
     {
         $contract = UserContract::with([
@@ -241,6 +263,11 @@ class PaymentController extends Controller
             'utilityPrice' => $utilityPrice
         ]);
     }
+
+    /**
+     * Return form for creating a new payment
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $payments = Payment::orderBy('id', 'desc')->get();
@@ -249,12 +276,14 @@ class PaymentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store payment data
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
         try {
-            // dd($request->all());
             $contractId = $request->input('user_contract_id');
             $currentDate = Carbon::now();
             $existingPayment = Payment::where('user_contract_id', $contractId)
@@ -270,7 +299,6 @@ class PaymentController extends Controller
             $total_paid = $request->input('amount');
             $total_room_price_before_discount = $request->input('total_room_price_before_discount');
             if ($request->input('advance_payment_amount')) {
-                // dd($request->all());
                 $total_due = 0;
                 $total_amount = $request->input('advance_payment_amount');
             } else {
@@ -336,18 +364,28 @@ class PaymentController extends Controller
             Session::flash('success', __('Payment added successfully.'));
             return redirect()->route('payments.index');
         } catch (Exception $e) {
-            dd($e);
             Session::flash('error', __('Failed to add payment.'));
             return redirect()->route('payments.index');
         }
     }
 
+    /*
+    * Create Utility Payment
+    * @param int $id
+    * @return \Illuminate\View\View
+    */
     public function createUitilityPayment($id)
     {
         $payment = Payment::findOrFail($id);
         $contract = UserContract::where('room_id', $payment->userContract->room_id)->first();
         return view('backends.payment.partial.payment_utility', compact('payment', 'contract'));
     }
+
+    /*
+    * Advance Utility Payment
+    * @param int $id
+    * @return \Illuminate\Http\JsonResponse
+    */
     public function advanceUtilityPayment($id)
     {
         $month_paid = request()->input('month_paid');
@@ -388,6 +426,12 @@ class PaymentController extends Controller
             'utilityRates' => $utilityRates,
         ]);
     }
+
+    /*
+    * Store Advance Utility Payment
+    * @param Request $request
+    * @return \Illuminate\Http\JsonResponse
+    */
     public function storeAdvanceUtilityPayment(Request $request)
     {
         try {
@@ -402,8 +446,10 @@ class PaymentController extends Controller
             $payment = Payment::find($payment_id);
 
             if (!$payment) {
-                Session::flash('error', __('Invalid payment ID.'));
-                return redirect()->back();
+            return response()->json([
+                'error' => 0,
+                'msg' => Lang::get('Invalid payment ID.')
+            ]);
             }
 
             $start_date = Carbon::parse($payment->start_date);
@@ -411,49 +457,72 @@ class PaymentController extends Controller
 
             foreach ($utilityIds as $index => $utilityId) {
 
-                $utilityDate = Carbon::create($year_paid, $month_paid, 1);
-                if ($utilityDate->lt($start_date) || $utilityDate->gt($end_date)) {
-                    Session::flash('error', __('The utility payment date is outside the allowed payment period.'));
-                    return redirect()->back();
-                }
-                // Check if payment utility already exists in this month
-                $exists = PaymentUtility::where('payment_id', $payment_id)
-                    ->where('utility_id', $utilityId)
-                    ->where('month_paid', $month_paid)
-                    ->where('year_paid', $year_paid)
-                    ->exists();
-                if ($exists) {
-                    Session::flash('error', __('The utility payment of this month is paid already.'));
-                    return redirect()->back();
-                }
-                PaymentUtility::create([
-                    'payment_id' => $payment_id,
-                    'utility_id' => $utilityId,
-                    'usage' => $utilityUsages[$index],
-                    'rate_per_unit' => $utilityRates[$index],
-                    'total_amount' => $utilityTotals[$index],
-                    'month_paid' => $month_paid,
-                    'year_paid' => $year_paid,
-                ]);
-
-                $payment->update([
-                    'total_utility_amount' => $payment->total_utility_amount + $utilityTotals[$index],
-                    'total_amount' => $payment->total_amount + $utilityTotals[$index],
-                ]);
+            $utilityDate = Carbon::create($year_paid, $month_paid, 1);
+            if ($utilityDate->lt($start_date) || $utilityDate->gt($end_date)) {
+                $output = [
+                'error' => 0,
+                'msg' => Lang::get('The utility payment date is outside the allowed payment period.')
+                ];
+                return response()->json($output);
             }
-            Session::flash('success', __('Utility payment added successfully.'));
-            return redirect()->route('payments.index');
+            // Check if payment utility already exists in this month
+            $exists = PaymentUtility::where('payment_id', $payment_id)
+                ->where('utility_id', $utilityId)
+                ->where('month_paid', $month_paid)
+                ->where('year_paid', $year_paid)
+                ->exists();
+            if ($exists) {
+                $output = [
+                'error' => 0,
+                'msg' => Lang::get('Utility payment already exists for this month.'),
+                ];
+                return response()->json($output);
+            }
+            PaymentUtility::create([
+                'payment_id' => $payment_id,
+                'utility_id' => $utilityId,
+                'usage' => $utilityUsages[$index],
+                'rate_per_unit' => $utilityRates[$index],
+                'total_amount' => $utilityTotals[$index],
+                'month_paid' => $month_paid,
+                'year_paid' => $year_paid,
+            ]);
+
+            $payment->update([
+                'total_utility_amount' => $payment->total_utility_amount + $utilityTotals[$index],
+                'total_amount' => $payment->total_amount + $utilityTotals[$index],
+            ]);
+            }
+            $output = [
+                'success' => 1,
+                'msg' => Lang::get('Utility payment added successfully.')
+            ];  
+            return response()->json($output);
         } catch (Exception $e) {
-            dd($e);
-            Session::flash('error', __('Something went wrong'));
-            return redirect()->route('payments.index');
+            $output = [
+                'error' => 0,
+                'msg' => Lang::get('Something went wrong'),
+            ];
+            return response()->json($output);  
         }
     }
-    public function deleteUtilityAdvancePayment($payment_id)
+
+    /*
+    * Delete Utility Advance Payment
+    * @param Request $request
+    * @param int $payment_id
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function deleteUtilityAdvancePayment(Request $request, $payment_id)
     {
         try {
-            $paymentUtilities = PaymentUtility::where('payment_id', $payment_id)->get();
-
+            $payment_id = $payment_id ?? $request->input('payment_id');
+            $month_paid = $request->input('month_paid');
+            $year_paid  = $request->input('year_paid');
+            $paymentUtilities = PaymentUtility::where('payment_id', $payment_id)
+            ->where('month_paid',$month_paid)
+            ->where('year_paid',$year_paid)
+            ->get();
             if ($paymentUtilities->isEmpty()) {
                 return response()->json(['status' => 'error', 'message' => 'Utility payments not found'], 404);
             }
@@ -472,7 +541,9 @@ class PaymentController extends Controller
             $payment->save();
 
             // Delete the utility payments
-            PaymentUtility::where('payment_id', $payment_id)->delete();
+            foreach ($paymentUtilities as $utility) {
+                $utility->delete();
+            }
 
             return response()->json(['status' => 'success', 'message' => 'Utility payments deleted successfully.']);
         } catch (Exception $e) {
@@ -482,7 +553,11 @@ class PaymentController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Update payment data
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, $id)
     {
@@ -532,13 +607,15 @@ class PaymentController extends Controller
             Session::flash('success', __('Payment updated successfully.'));
             return redirect()->route('payments.index');
         } catch (Exception $e) {
-            dd($e);
             Session::flash('error', __('Failed to update payment.'));
             return redirect()->route('payments.index');
         }
     }
     /**
-     * Remove the specified resource from storage.
+     * Delete payment
+     * @param Payment $payment
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
     public function destroy(Payment $payment)
     {

@@ -55,7 +55,7 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
     //send invoice
     Route::get('/send-invoice/{userId}', [InvoiceController::class, 'sendInvoiceToTelegram']);
     Route::post('/send-invoice/{userId}', [InvoiceController::class, 'sendInvoiceToTelegram'])->name('send-invoice');
-    Route::get('/invoice/download/{userId}', [InvoiceController::class, 'downloadInvoice'])->name('invoice.download');
+    // Route::get('/invoice/download/{userId}', [InvoiceController::class, 'downloadInvoice'])->name('invoice.download');
 
     //chat
     Route::get('/fetch-messages', [ChatController::class, 'fetchMessages'])->name('get-chat-from-user');
@@ -137,6 +137,10 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
     Route::get('/get-total-room-price/{id}', [PaymentController::class, 'getTotalRoomPrice'])->name('payments.getTotalRoomPrice');
 
     Route::get('/monthly_usages/{room}', [MonthlyUsageController::class, 'show'])->name('monthly_usages.show');
+
+    //Invoice Route
+    // Route::get('invoice/view/{id}', 'InvoiceController@viewInvoice')->name('invoice.view');
+    Route::get('invoice/download/{id}', [InvoiceController::class, 'downloadInvoice'])->name('invoice.download');
 });
 Auth::routes();
 

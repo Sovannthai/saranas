@@ -66,7 +66,8 @@
                     </fieldset>
                 </div>
                 <div class="mt-2">
-                    <button type="submit" class="btn btn-primary btn-sm float-right mb-2 ml-1">@lang('Submit')</button>
+                    <button type="submit"
+                        class="btn btn-primary btn-sm float-right mb-2 ml-1">@lang('Submit')</button>
                     <button type="button" class="btn btn-dark btn-sm float-right"
                         data-bs-dismiss="modal">@lang('Close')</button>
                 </div>
@@ -82,7 +83,8 @@
 
             if (month_paid && contract_id) {
                 $.ajax({
-                    url: "{{ route('advance-payment.utility', '') }}/" + contract_id,
+                    url: "{{ route('advance-payment.utility', ':id') }}".replace(':id',
+                        contract_id),
                     type: 'GET',
                     data: {
                         month_paid: month_paid
@@ -97,9 +99,12 @@
                                     .usage) : 0;
                                 let ratePerUnit = 0;
                                 let totalPrice = 0;
-                                let utilityRate = response.utilityRates.find(rate =>rate.utility_type_id == utility.utility_type_id);
+                                let utilityRate = response.utilityRates.find(rate =>
+                                    rate.utility_type_id == utility
+                                    .utility_type_id);
                                 if (utilityRate) {
-                                    ratePerUnit = parseFloat(utilityRate.rate_per_unit);
+                                    ratePerUnit = parseFloat(utilityRate
+                                        .rate_per_unit);
                                     totalPrice = usage * ratePerUnit;
                                 }
 
@@ -159,7 +164,26 @@
                 }
             });
             $(this).append(utilityInputs);
-            this.submit();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success === 1) {
+                        toastr.success(response.msg);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        toastr.error(response.msg);
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An error occurred. Please try again.');
+                    console.error(xhr);
+                }
+            });
         });
     });
 </script>

@@ -17,15 +17,6 @@ class UnreadMessagesMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if (Auth::check()) {
-        //     $user = Auth::user();
-
-        //     // Count unread messages for the authenticated user
-        //     $unreadCount = $user->messages()->where('is_read', '0')->count();
-
-        //     // Share the unread count with all views
-        //     view()->share('unreadMessagesCount', $unreadCount);
-        // }
         $unreadCount = Message::where('is_read', '0')->count();
         view()->share('unreadMessagesCount', $unreadCount);
         return $next($request);

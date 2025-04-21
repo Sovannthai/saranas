@@ -15,36 +15,126 @@ use GuzzleHttp\Exception\RequestException;
 
 class InvoiceController extends Controller
 {
+    // public function sendInvoiceToTelegram($userId)
+    // {
+    //     try {
+    //         $user = User::findOrFail($userId);
+    //         $contract = UserContract::where('user_id', $user->id)->first();
+    //         $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
+    //         $pdfPath = PdfGenerator::generatePdf('backends.invoice._invoice', ['invoiceData' => $invoiceData, 'user' => $user], "invoice_{$user->id}");
+    //         if (file_exists($pdfPath)) {
+    //             $this->sendTelegramInvoice($user->telegram_id, $pdfPath);
+    //         } else {
+    //             return response()->json(['message' => 'PDF file not found.'], 404);
+    //         }
+    //         $user->notify(new InvoicePaid((object) [
+    //             'data' => $invoiceData,
+    //         ]));
+
+    //         $data = ['success' => 'Invoice sent successfully'];
+    //     } catch (Exception $e) {
+    //         dd($e);
+    //         $data = ['error' => 'Something went wrong'];
+    //     }
+
+    //     return redirect()->route('payments.index')->with($data);
+    // }
     public function sendInvoiceToTelegram($userId)
-    {
-        try {
-            $user = User::findOrFail($userId);
-            $contract = UserContract::where('user_id', $user->id)->first();
-            $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
-            $pdfPath = PdfGenerator::generatePdf('backends.invoice._invoice', ['invoiceData' => $invoiceData, 'user' => $user], "invoice_{$user->id}");
-
-            if (file_exists($pdfPath)) {
-                $this->sendTelegramInvoice($user->telegram_id, $pdfPath);
-            } else {
-                return response()->json(['message' => 'PDF file not found.'], 404);
-            }
-            $user->notify(new InvoicePaid((object) [
-                'id' => 123,
-                'amount' => 100,
-            ]));
-
-            $data = ['success' => 'Invoice sent successfully'];
-        } catch (Exception $e) {
-            dd($e);
-            $data = ['error' => 'Something went wrong'];
+{
+    try {
+        $user = User::findOrFail($userId);
+        $contract = UserContract::where('user_id', $user->id)->firstOrFail();
+        $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')
+            ->where('user_contract_id', $contract->id)
+            ->latest()
+            ->firstOrFail();
+            
+        // Generate PDF
+        $pdfPath = PdfGenerator::generatePdf(
+            'backends.invoice._invoice', 
+            ['invoiceData' => $invoiceData, 'user' => $user], 
+            "invoice_{$user->id}"
+        );
+        
+        // Check if PDF exists and if user has a Telegram ID
+        if (!file_exists($pdfPath)) {
+            return redirect()->route('payments.index')
+                ->with('error', 'Failed to generate PDF file.');
         }
-
-        return redirect()->route('payments.index')->with($data);
+        
+        if (empty($user->telegram_id)) {
+            return redirect()->route('payments.index')
+                ->with('error', 'User does not have a Telegram ID.');
+        }
+            
+        // Send notification with invoice data
+        $user->notify(new InvoicePaid($invoiceData));
+        
+        // Send PDF directly to telegram
+        $this->sendTelegramPdf($user->telegram_id, $pdfPath);
+        
+        return redirect()->route('payments.index')
+            ->with('success', 'Invoice sent successfully to Telegram.');
+            
+    } catch (\Exception $e) {
+        \Log::error('Failed to send invoice to Telegram: ' . $e->getMessage());
+        return redirect()->route('payments.index')
+            ->with('error', 'Failed to send invoice: ' . $e->getMessage());
     }
+}
+
+// Add this method to your controller to send the PDF file
+protected function sendTelegramPdf($telegramId, $pdfPath)
+{
+    if (empty($telegramId)) {
+        throw new \Exception('Telegram ID is required.');
+    }
+    
+    if (!file_exists($pdfPath)) {
+        throw new \Exception('PDF file not found at: ' . $pdfPath);
+    }
+    
+    $telegramBotToken = '6892001713:AAEFqGqO4bqaQmNx465sQxV-Z6Cq-HHQCsw';
+    if (empty($telegramBotToken)) {
+        throw new \Exception('Telegram Bot Token is not configured.');
+    }
+    
+    $client = new \GuzzleHttp\Client();
+    
+    // Send document to Telegram
+    $response = $client->post("https://api.telegram.org/bot{$telegramBotToken}/sendDocument", [
+        'multipart' => [
+            [
+                'name' => 'chat_id',
+                'contents' => $telegramId
+            ],
+            [
+                'name' => 'document',
+                'contents' => fopen($pdfPath, 'r'),
+                'filename' => basename($pdfPath)
+            ],
+            [
+                'name' => 'caption',
+                'contents' => 'Your invoice is attached.'
+            ]
+        ]
+    ]);
+    
+    $result = json_decode($response->getBody()->getContents(), true);
+    
+    if (!isset($result['ok']) || $result['ok'] !== true) {
+        throw new \Exception('Failed to send document to Telegram: ' . json_encode($result));
+    }
+    
+    return true;
+}
     public function downloadInvoice($userId)
     {
         try {
-            $user = User::findOrFail($userId);
+            $user = User::where('id', $userId)->first();
+            if (!$user) {
+                return 'User not found';
+            }
             $contract = UserContract::where('user_id', $user->id)->first();
             $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
 
@@ -62,7 +152,7 @@ class InvoiceController extends Controller
     }
     protected function sendTelegramInvoice($telegramUserId, $filePath)
     {
-        $botToken = env('TELEGRAM_BOT_TOKEN');
+        $botToken = '6892001713:AAEFqGqO4bqaQmNx465sQxV-Z6Cq-HHQCsw';
         $chatId = $telegramUserId;
         $url = "https://api.telegram.org/bot{$botToken}/sendDocument";
 
@@ -119,8 +209,8 @@ class InvoiceController extends Controller
     public function downloadUtilitiesInvoice($userId)
     {
         try {
-            $user = User::findOrFail($userId);
-            $contract = UserContract::where('user_id', $user->id)->first();
+            $user        = User::findOrFail($userId);
+            $contract    = UserContract::where('user_id', $user->id)->first();
             $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
 
             $pdfPath = PdfGenerator::generatePdf('backends.invoice._utilities_invoice', ['invoiceData' => $invoiceData, 'user' => $user], "utilities_invoice_{$user->id}");
@@ -131,7 +221,6 @@ class InvoiceController extends Controller
                 return response()->json(['message' => 'PDF file not found.'], 404);
             }
         } catch (Exception $e) {
-            dd($e);
             return redirect()->route('payments.index')->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
