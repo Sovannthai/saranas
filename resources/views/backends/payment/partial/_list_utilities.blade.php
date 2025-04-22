@@ -115,6 +115,10 @@
                                                 method="POST" class="delete-utility-form d-inline-block">
                                                 @csrf
                                                 @method('DELETE')
+                                                <input type="hidden" name="month_paid" id="month_paid"
+                                                    value="{{ $utilities->first()->month_paid }}">
+                                                <input type="hidden" name="year_paid" id="year_paid"
+                                                    value="{{ $utilities->first()->year_paid }}">
                                                 <button type="button"
                                                     class="btn btn-outline-danger delete-button text-uppercase dropdown-item"
                                                     data-payment-id="{{ $payment->id }}">
@@ -162,6 +166,10 @@
     $(document).ready(function() {
         $('.delete-button').on('click', function() {
             let paymentId = $(this).data('payment-id');
+            let monthPaid = $(this).closest('form').find('#month_paid').val();
+            let yearPaid = $(this).closest('form').find('#year_paid').val();
+            let row = $(this).closest('tr');
+            
             Swal.fire({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -177,12 +185,16 @@
                         type: "POST",
                         data: {
                             _token: "{{ csrf_token() }}",
-                            _method: "DELETE"
+                            _method: "DELETE",
+                            month_paid: monthPaid,
+                            year_paid: yearPaid
                         },
                         success: function(response) {
                             if (response.status === 'success') {
                                 toastr.success(response.message);
-                                $(`button[data-payment-id="${paymentId}"]`).closest('tr').remove();
+                                row.fadeOut(400, function() {
+                                    $(this).remove();
+                                });
                             } else {
                                 toastr.error(response.message);
                             }

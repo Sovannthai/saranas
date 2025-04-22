@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Lang;
 
 class PaymentController extends Controller
 {
@@ -261,6 +262,11 @@ class PaymentController extends Controller
             'utilityPrice' => $utilityPrice
         ]);
     }
+
+    /**
+     * Return form for creating a new payment
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
         $payments = Payment::orderBy('id', 'desc')->get();
@@ -459,8 +465,10 @@ class PaymentController extends Controller
             $payment = Payment::find($payment_id);
 
             if (!$payment) {
-                Session::flash('error', __('Invalid payment ID.'));
-                return redirect()->back();
+            return response()->json([
+                'error' => 0,
+                'msg' => Lang::get('Invalid payment ID.')
+            ]);
             }
 
             $start_date = Carbon::parse($payment->start_date);
@@ -522,11 +530,16 @@ class PaymentController extends Controller
      * @param Request $payment_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteUtilityAdvancePayment($payment_id)
+    public function deleteUtilityAdvancePayment(Request $request, $payment_id)
     {
         try {
-            $paymentUtilities = PaymentUtility::where('payment_id', $payment_id)->get();
-
+            $payment_id = $payment_id ?? $request->input('payment_id');
+            $month_paid = $request->input('month_paid');
+            $year_paid  = $request->input('year_paid');
+            $paymentUtilities = PaymentUtility::where('payment_id', $payment_id)
+            ->where('month_paid',$month_paid)
+            ->where('year_paid',$year_paid)
+            ->get();
             if ($paymentUtilities->isEmpty()) {
                 return response()->json(['status' => 'error', 'message' => 'Utility payments not found'], 404);
             }
