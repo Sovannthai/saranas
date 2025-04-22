@@ -107,6 +107,10 @@
     tabindex="-1" aria-labelledby="createPaymentModalLabel" aria-hidden="true">
     {{-- Modal Create Payment --}}
 </div>
+<div class="modal fade editPaymentModal" id="editPaymentModal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
+    {{-- Modal Edit Payment --}}
+</div>
 <div class="modal fade add_uitlity_payment" id="add_uitlity_payment" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="add_uitlity_paymentLabel" aria-hidden="true">
     {{-- Modal Utility Payment --}}
@@ -116,23 +120,58 @@
     {{-- Modal Utility Payment --}}
 </div>
 
-@include('backends.payment.edit')
 @include('backends.payment.partial.add_payment_due')
 @include('backends.payment.partial._list_utilities')
 <script>
     $(document).on("click", ".btn-modal", function(e) {
-            e.preventDefault();
-            var container = $(this).data("container");
-            console.log(1);
+        e.preventDefault();
+        var container = $(this).data("container");
+        var url = $(this).data("href");
 
-            $.ajax({
-                url: $(this).data("href"),
-                dataType: "html",
-                success: function(result) {
-                    $(container).html(result).modal("show");
-                },
-            });
+        $.ajax({
+            url: url,
+            dataType: "html",
+            success: function(result) {
+                $(container).html(result);
+                var bsModal = new bootstrap.Modal(document.querySelector(container));
+                bsModal.show();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading modal content:", error);
+                console.error("Response:", xhr.responseText);
+                toastr.error("Failed to load content. Please try again.");
+            }
         });
+    });
+        
+    $(document).on('submit', '#editPaymentForm', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const url = form.attr('action');
+        const formData = form.serialize();
+        
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function(response) {
+                $('.editPaymentModal').modal('hide');
+                
+                toastr.success('Payment updated successfully');
+                
+                $('#payment-datatables').DataTable().ajax.reload();
+            },
+            error: function(xhr) {
+                let errorMessage = 'Something went wrong. Please try again.';
+                
+                if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                toastr.error(errorMessage);
+            }
+        });
+    });
 </script>
 <script>
     function printInvoice(userId) {
@@ -180,6 +219,7 @@
                 const downloadInvoiceUrl = downloadInvoiceRoute.replace('__USER_ID__', userId);
                 const sendInvoiceUrl = sendInvoiceRoute.replace('__USER_ID__', userId);
                 const deletePaymentUrl = deletePaymentRoute.replace('__PAYMENT_ID__', paymentId);
+                const editUrl = "{{ route('payments.edit', '__PAYMENT_ID__') }}".replace('__PAYMENT_ID__', paymentId);
                 return `
                 <div class="dropdown">
                             <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
@@ -190,8 +230,15 @@
                                 <li class="mb-1">
                                     <a class="btn float-right btn-sm dropdown-item btn-modal btn-add" href="#"
                                         data-href="${viewInvoiceUrl}"
-                                        data-toggle="modal" data-container=".createPaymentModal">
+                                        data-bs-toggle="modal" data-container=".createPaymentModal">
                                         <i class="fas fa-eye"></i> @lang('View Invoice')
+                                    </a>
+                                </li>
+                                <li class="mb-1">
+                                    <a class="btn float-right btn-sm dropdown-item btn-modal btn-add" href="#"
+                                        data-href="${editUrl}"
+                                        data-bs-toggle="modal" data-container=".editPaymentModal">
+                                        <i class="fas fa-edit"></i> @lang('Edit Payment')
                                     </a>
                                 </li>
                                 ${payment.type === 'advance' ? `
@@ -248,7 +295,18 @@
                         : '<a href="#" class="btn btn-warning btn-sm">Pending</a>';
                 }
             },
-            { data: 'payment_date' },
+            { 
+                data: 'payment_date',
+                render: function(data, type, row) {
+                    if (!data) return 'N/A';
+                    const date = new Date(data);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                }
+            },
             { data: 'invoice_no' },
             {
                 data: 'userContract.user.name',
@@ -295,5 +353,26 @@
         dataTable.ajax.reload();
     });
 });
+</script>
+<script>
+    // Initialize modals when they're loaded
+    $(document).on('shown.bs.modal', '.editPaymentModal', function() {
+        // Reinitialize select2 in modal
+        if ($.fn.select2) {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this)
+            });
+        }
+    });
+    
+    // Initialize toastr (if not already initialized)
+    if (typeof toastr !== 'undefined') {
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: 5000
+        };
+    }
 </script>
 @endsection
