@@ -46,7 +46,7 @@
                     <div class="col-sm-6">
                         <label for="room_price">@lang('Room Price')</label>
                         <input type="number" name="room_price" id="room_price" class="form-control"
-                            step="0.01" min="0" value="{{ $payment->room_price }}">
+                            step="0.01" min="0" value="{{ $payment->room_price }}" readonly>
                     </div>
                     <hr style="height: 1px;background-color: #000000;margin: 10px 0;width:-webkit-fill-available;">
                     <fieldset>
@@ -55,14 +55,15 @@
                             <div class="col-sm-6">
                                 <label for="discount_value">@lang('Total Discount')</label>
                                 <input type="number" name="total_discount" id="discount_value"
-                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_discount }}">
+                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_discount }}" readonly>
                             </div>
                             <div class="col-sm-6">
                                 <label for="discount_type">@lang('Discount Type')</label>
-                                <select name="discount_type" id="discount_type" class="form-control">
+                                <select name="discount_type" id="discount_type" class="form-control" disabled>
                                     <option value="amount" {{ $payment->discount_type == 'amount' ? 'selected' : '' }}>@lang('Fixed Amount')</option>
                                     <option value="percentage" {{ $payment->discount_type == 'percentage' ? 'selected' : '' }}>@lang('Percentage')</option>
                                 </select>
+                                <input type="hidden" name="discount_type" value="{{ $payment->discount_type }}">
                             </div>
                         </div>
                     </fieldset>
@@ -85,7 +86,7 @@
                                                 <td>
                                                     <input type="number" name="amenity_data[{{ $amenity->id }}][price]" 
                                                         class="form-control amenity-price" 
-                                                        value="{{ $amenity->amenity_price }}" min="0" step="0.01">
+                                                        value="{{ $amenity->amenity_price }}" min="0" step="0.01" readonly>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -95,7 +96,7 @@
                             <div class="col-sm-4">
                                 <label for="total_amount_amenity">@lang('Total Amenity Price')</label>
                                 <input type="number" name="total_amount_amenity" id="total_amount_amenity"
-                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_amount_amenity }}">
+                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_amount_amenity }}" readonly>
                             </div>
                         </div>
                     </fieldset>
@@ -120,12 +121,12 @@
                                                 <td>
                                                     <input type="number" name="utility_data[{{ $utility->utility_id }}][usage]" 
                                                         class="form-control utility-usage" 
-                                                        value="{{ $utility->usage }}" min="0" step="0.01">
+                                                        value="{{ $utility->usage }}" min="0" step="0.01" readonly>
                                                 </td>
                                                 <td>
                                                     <input type="number" name="utility_data[{{ $utility->utility_id }}][rate]" 
                                                         class="form-control utility-rate" 
-                                                        value="{{ $utility->rate_per_unit }}" min="0" step="0.01">
+                                                        value="{{ $utility->rate_per_unit }}" min="0" step="0.01" readonly>
                                                 </td>
                                                 <td>
                                                     <input type="number" name="utility_data[{{ $utility->utility_id }}][total]" 
@@ -140,14 +141,14 @@
                             <div class="col-sm-4">
                                 <label for="total_utility_amount">@lang('Total Utility Price')</label>
                                 <input type="number" name="total_utility_amount" id="total_utility_amount"
-                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_utility_amount }}">
+                                    class="form-control" step="0.01" min="0" value="{{ $payment->total_utility_amount }}" readonly>
                             </div>
                         </div>
                     </fieldset>
                     <div class="col-sm-6">
                         <label for="total_amount">@lang('Total Amount')</label>
                         <input type="number" name="total_amount" id="total_amount" class="form-control"
-                            step="0.01" min="0" required value="{{ $payment->total_amount }}">
+                            step="0.01" min="0" required value="{{ $payment->total_amount }}" readonly>
                     </div>
                     <div class="col-sm-6">
                         <label for="amount">@lang('Paid Amount')</label>
@@ -182,14 +183,47 @@
 
 <script>
     $(document).ready(function() {
-        // Initialize Select2
         if ($.fn.select2) {
             $('.select2').select2({
                 dropdownParent: $(".editPaymentModal")
             });
         }
+
+        // Store original values
+        const originalAmount = parseFloat($("#amount").val()) || 0;
+        const totalAmount = parseFloat($("#total_amount").val()) || 0;
+        const roomPrice = parseFloat($("#room_price").val()) || 0;
+        const totalUtilityAmount = parseFloat($("#total_utility_amount").val()) || 0;
+        const totalAmenityAmount = parseFloat($("#total_amount_amenity").val()) || 0;
         
-        // Calculate utility totals when inputs change
+        // Function to update amount based on payment type
+        function updateAmountBasedOnType(paymentType) {
+            let newAmount = originalAmount; // Default to original amount
+            
+            switch(paymentType) {
+                case 'all_paid':
+                    newAmount = totalAmount;
+                    break;
+                case 'rent':
+                    newAmount = roomPrice + totalAmenityAmount;
+                    break;
+                case 'utility':
+                    newAmount = totalUtilityAmount;
+                    break;
+                case 'advance':
+                    // Keep the original amount
+                    break;
+            }
+            
+            $("#amount").val(newAmount.toFixed(2));
+        }
+        
+        // Handle payment type change
+        $("#type").on('change', function() {
+            const selectedType = $(this).val();
+            updateAmountBasedOnType(selectedType);
+        });
+
         $(document).on('change', '.utility-usage, .utility-rate', function() {
             const row = $(this).closest('tr');
             const usage = parseFloat(row.find('.utility-usage').val()) || 0;
@@ -200,34 +234,34 @@
             recalculateTotals();
         });
         
-        // Calculate amenity totals when inputs change
         $(document).on('change', '.amenity-price', function() {
             recalculateTotals();
         });
         
-        // Function to recalculate all totals
         function recalculateTotals() {
-            // Calculate amenity total
             let amenityTotal = 0;
             $('.amenity-price').each(function() {
                 amenityTotal += parseFloat($(this).val()) || 0;
             });
             $('#total_amount_amenity').val(amenityTotal.toFixed(2));
             
-            // Calculate utility total
             let utilityTotal = 0;
             $('.utility-total').each(function() {
                 utilityTotal += parseFloat($(this).val()) || 0;
             });
             $('#total_utility_amount').val(utilityTotal.toFixed(2));
             
-            // Calculate grand total
             const roomPrice = parseFloat($('#room_price').val()) || 0;
             const totalAmount = roomPrice + amenityTotal + utilityTotal;
             $('#total_amount').val(totalAmount.toFixed(2));
+            
+            // Update amount based on payment type if the type is selected
+            const selectedType = $('#type').val();
+            if (selectedType) {
+                updateAmountBasedOnType(selectedType);
+            }
         }
         
-        // Trigger recalculations on form load
         recalculateTotals();
     });
 </script> 

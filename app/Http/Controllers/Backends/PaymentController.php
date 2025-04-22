@@ -690,7 +690,15 @@ class PaymentController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => __('Payment updated successfully.')
+                    'message' => __('Payment updated successfully.'),
+                    'payment' => [
+                        'id' => $payment->id,
+                        'payment_status' => $payment->payment_status,
+                        'type' => $payment->type,
+                        'amount' => $payment->amount,
+                        'total_amount' => $payment->total_amount,
+                        'total_due_amount' => $payment->total_due_amount
+                    ]
                 ]);
             }
 

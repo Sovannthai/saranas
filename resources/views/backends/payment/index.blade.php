@@ -154,11 +154,26 @@
             type: 'POST',
             url: url,
             data: formData,
+            beforeSend: function() {
+                // Disable submit button during processing
+                form.find(':submit').prop('disabled', true).text('Processing...');
+            },
             success: function(response) {
                 $('.editPaymentModal').modal('hide');
                 
-                toastr.success('Payment updated successfully');
+                let successMessage = 'Payment updated successfully';
+                if (response.payment) {
+                    const payment = response.payment;
+                    const formattedAmount = parseFloat(payment.amount).toFixed(2);
+                    const status = payment.payment_status.charAt(0).toUpperCase() + payment.payment_status.slice(1);
+                    
+                    successMessage = `Payment updated: ${status} - $${formattedAmount}`;
+                    if (payment.total_due_amount > 0) {
+                        successMessage += ` (Due: $${parseFloat(payment.total_due_amount).toFixed(2)})`;
+                    }
+                }
                 
+                toastr.success(successMessage);
                 $('#payment-datatables').DataTable().ajax.reload();
             },
             error: function(xhr) {
@@ -169,6 +184,10 @@
                 }
                 
                 toastr.error(errorMessage);
+            },
+            complete: function() {
+                // Re-enable submit button after request completes
+                form.find(':submit').prop('disabled', false).text('Update Payment');
             }
         });
     });
