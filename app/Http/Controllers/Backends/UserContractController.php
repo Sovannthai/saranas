@@ -56,7 +56,7 @@ class UserContractController extends Controller
 
         $usedRooms = UserContract::pluck('room_id')->toArray();
         $availableRooms = Room::where('status', 'available')->whereNotIn('id', $usedRooms)->get();
-        $rooms = Room::where('status', 'available')->get();
+        $rooms = Room::get();
         $currencySymbol = '$';
 
         return view('backends.user_contract.index', compact('userContracts', 'users', 'availableUsers', 'availableRooms', 'currencySymbol', 'rooms'));

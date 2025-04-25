@@ -155,7 +155,6 @@
             url: url,
             data: formData,
             beforeSend: function() {
-                // Disable submit button during processing
                 form.find(':submit').prop('disabled', true).text('Processing...');
             },
             success: function(response) {
