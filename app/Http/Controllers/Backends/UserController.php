@@ -54,7 +54,6 @@ class UserController extends Controller
                 'msg' => trans('Something went wrong')
             ];
         }
-
         return redirect()->route('home')->with($output);
     }
     /**
@@ -112,7 +111,8 @@ class UserController extends Controller
             ];
         } catch (\Exception $e) {
             $output = [
-                'error' =>__('Something went wrong')
+                'error' =>__('Something went wrong'),
+                'message' => $e->getMessage()
             ];
         }
         return redirect()->route('users.index')->with($output);
@@ -161,15 +161,18 @@ class UserController extends Controller
                     File::delete(public_path('uploads/all_photo/' . $old_photo_path));
                 }
             }
-            $role = Role::findOrFail($request->role);
-            $user->assignRole($role->name);
+            
+            $user->roles()->detach();
+            if ($request->has('role') && !empty($request->role)) {
+                $role = Role::findOrFail($request->role);
+                $user->assignRole($role->name);
+            }
 
             $user->save();
             $output = [
                 'success' =>__('Updated successfully')
             ];
         } catch (\Exception $e) {
-            dd($e);
             $output = [
                 'error' =>__('Something went wrong')
             ];

@@ -67,7 +67,7 @@
                             </li>
                             @endif
                             @if (auth()->user()->roles->first()->name == 'Admin')
-                            <li class="@if (Route::is('permission.*')) active @endif">
+                            <li class="@if (Route::is('permission.*')) active @endif" hidden>
                                 <a href="{{ route('permission.index') }}">
                                     <span class="sub-item">@lang('Permissions')</span>
                                 </a>

@@ -34,7 +34,7 @@
                                 </span>
                             </td>
                             <td>{{ $user->name }}</td>
-                            <td>{{ @$user->roles->first()->name }}</td>
+                            <td>{{ $user->roles && $user->roles->count() ? $user->roles->first()->name : '' }}</td>
                             <td>{{ $user->email }}</td>
                             <td>
                                 @if (auth()->user()->can('update user'))
