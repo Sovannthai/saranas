@@ -49,7 +49,7 @@
                     <div class="col-md-12">
                         <label for="photo" class="col-form-label">@lang('Profile')</label>
                         <input name="image" type="file" class="dropify" data-height="100"
-                            data-default-file="{{ url('uploads/all_photo/' . $user->image) }}"
+                            data-default-file="{{ asset('uploads/all_photo/' . $user->image) }}"
                             value="{{ $user->image }}" /><br>
                         <input type="hidden" name="video" value="{{ $user->image }}">
                     </div>
