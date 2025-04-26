@@ -26,15 +26,15 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="percentage">@lang('Discount Value')</label>
-                            <input type="number" name="discount_value" id="percentage" class="form-control" step="0.01" min="0">
+                            <input type="number" name="discount_value" id="percentage" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="col-sm-4">
                             <label for="start_date">@lang('Start Date')</label>
-                            <input type="date" name="start_date" id="start_date" class="form-control">
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
                         </div>
                         <div class="col-sm-4">
                             <label for="end_date">@lang('End Date')</label>
-                            <input type="date" name="end_date" id="end_date" class="form-control">
+                            <input type="date" name="end_date" id="end_date" class="form-control" required>
                         </div>
                         <div class="col-sm-4">
                             <label for="status">@lang('Status')</label>

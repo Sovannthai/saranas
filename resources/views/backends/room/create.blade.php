@@ -15,7 +15,7 @@
                               <label for="room_number">@lang('Room Number')</label>
                               <input type="text" name="room_number" id="room_number"
                                   class="form-control @error('room_number') is-invalid @enderror"
-                                  placeholder="@lang('Enter room number')">
+                                  placeholder="@lang('Enter room number')" required>
                               @error('room_number')
                                   <div class="invalid-feedback">{{ $message }}</div>
                               @enderror

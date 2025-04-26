@@ -16,7 +16,7 @@
                             <label for="title">@lang('Category Title')</label>
                             <input type="text" name="title" id="title"
                                 class="form-control @error('title') is-invalid @enderror"
-                                value="{{ old('title', $category->title) }}" placeholder="@lang('Enter category title')">
+                                value="{{ old('title', $category->title) }}" placeholder="@lang('Enter category title')" required>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

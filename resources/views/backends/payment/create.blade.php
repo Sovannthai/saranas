@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="user_contract_id">@lang('Contract')</label>
-                        <select name="user_contract_id" id="user_contract_id" class="form-control select2">
+                        <select name="user_contract_id" id="user_contract_id" class="form-control select2" required>
                             <option value="" selected>-- @lang('Select Contract') --</option>
                             @foreach ($contracts as $contract)
                                 <option value="{{ $contract->id }}">{{ $contract->user->name }} -
@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label for="month_paid">@lang('Month Paid')</label>
-                        <select name="month_paid" class="form-select">
+                        <select name="month_paid" class="form-select select2" required>
                             <option value="" selected>-- @lang('Select Month') --</option>
                             <option value="1">@lang('January')</option>
                             <option value="2">@lang('February')</option>
@@ -128,7 +128,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label for="type">@lang('Payment Type')</label>
-                        <select name="type" id="type" class="form-control">
+                        <select name="type" id="type" class="form-control" required>
                             <option value="" selected>-- @lang('Select Type') --</option>
                             <option value="all_paid">@lang('Paid for All')</option>
                             <option value="rent">@lang('Rent')</option>
@@ -169,6 +169,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $(document).on('shown.bs.modal', '.modal', function() {
+            $(this).find('.select2').select2({
+                dropdownParent: $(this)
+            });
+        });
+    });
+</script>
 <script>
     $(document).ready(function() {
         var roomPrice = 0;

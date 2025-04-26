@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label for="category_id">@lang('Category')</label>
-                            <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror select2">
+                            <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror select2" required>
                                 <option value="">@lang('Select Category')</option>
                                 @foreach ($expenseCategories as $category)
                                     <option value="{{ $category->id }}">{{ $category->title }}</option>
@@ -28,7 +28,7 @@
                             <label for="amount">@lang('Amount')</label>
                             <input type="number" name="amount" id="amount"
                                 class="form-control @error('amount') is-invalid @enderror"
-                                placeholder="@lang('Enter amount')">
+                                placeholder="@lang('Enter amount')" required>
                             @error('amount')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -37,7 +37,7 @@
                         <div class="col-sm-6 mt-2">
                             <label for="date">@lang('Date')</label>
                             <input type="date" name="date" id="date"
-                                class="form-control @error('date') is-invalid @enderror">
+                                class="form-control @error('date') is-invalid @enderror" required>
                             @error('date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

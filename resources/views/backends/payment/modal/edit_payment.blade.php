@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="user_contract_id">@lang('Contract')</label>
-                        <select name="user_contract_id" id="user_contract_id" class="form-control select2">
+                        <select name="user_contract_id" id="user_contract_id" class="form-control select2" required>
                             <option value="" disabled>-- @lang('Select Contract') --</option>
                             @foreach ($contracts as $contract)
                                 <option value="{{ $contract->id }}"
@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label for="month_paid">@lang('Month Paid')</label>
-                        <select name="month_paid" id="month_paid" class="form-select">
+                        <select name="month_paid" id="month_paid" class="form-select select2" required>
                             @for ($i = 1; $i <= 12; $i++)
                                 <option value="{{ $i }}"
                                     {{ $payment->month_paid == $i ? 'selected' : '' }}>
@@ -157,7 +157,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label for="type">@lang('Payment Type')</label>
-                        <select name="type" id="type" class="form-control">
+                        <select name="type" id="type" class="form-control" required>
                             <option value="all_paid" {{ $payment->type == 'all_paid' ? 'selected' : '' }}>@lang('Paid for All')</option>
                             <option value="rent" {{ $payment->type == 'rent' ? 'selected' : '' }}>@lang('Rent')</option>
                             <option value="utility" {{ $payment->type == 'utility' ? 'selected' : '' }}>@lang('Utility')</option>
