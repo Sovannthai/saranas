@@ -17,6 +17,14 @@ return Application::configure(basePath: dirname(__DIR__))
             // \App\Http\Middleware\Localization::class,
             // \App\Http\Middleware\SetLocale::class
         ]);
+
+        $middleware->web(append: [
+            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
+        ]);
+    
+        $middleware->alias([
+            'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -15,30 +15,6 @@ use GuzzleHttp\Exception\RequestException;
 
 class InvoiceController extends Controller
 {
-    // public function sendInvoiceToTelegram($userId)
-    // {
-    //     try {
-    //         $user = User::findOrFail($userId);
-    //         $contract = UserContract::where('user_id', $user->id)->first();
-    //         $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
-    //         $pdfPath = PdfGenerator::generatePdf('backends.invoice._invoice', ['invoiceData' => $invoiceData, 'user' => $user], "invoice_{$user->id}");
-    //         if (file_exists($pdfPath)) {
-    //             $this->sendTelegramInvoice($user->telegram_id, $pdfPath);
-    //         } else {
-    //             return response()->json(['message' => 'PDF file not found.'], 404);
-    //         }
-    //         $user->notify(new InvoicePaid((object) [
-    //             'data' => $invoiceData,
-    //         ]));
-
-    //         $data = ['success' => 'Invoice sent successfully'];
-    //     } catch (Exception $e) {
-    //         dd($e);
-    //         $data = ['error' => 'Something went wrong'];
-    //     }
-
-    //     return redirect()->route('payments.index')->with($data);
-    // }
     public function sendInvoiceToTelegram($userId)
 {
     try {
