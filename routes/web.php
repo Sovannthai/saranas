@@ -82,7 +82,7 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
     Route::resource('price_adjustments', PriceAdjustmentController::class);
     Route::get('/reports/room', [ReportController::class, 'room'])->name('reports.room');
     Route::get('reports/utility', [ReportController::class, 'utility'])->name('reports.utility');
-    Route::get('reports/payment',[ReportController::class,'paymentReport'])->name('reports.payment');
+    Route::get('reports/payment', [ReportController::class, 'paymentReport'])->name('reports.payment');
 
     // Auto update discount status
     Route::get('/discounts/check-end-dates', function () {
@@ -112,7 +112,6 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
         Route::put('update-type/{id}', [UtilityTypeController::class, 'update'])->name('utilities.updateType');
         Route::delete('destroy/{id}', [UtilityTypeController::class, 'destroy'])->name('utilities.destroyType');
         Route::get('get-rate-by-utility/{id}', [UtilitiesController::class, 'getRate'])->name('get-rate-by-utilities_type');
-
     });
 
     Route::resource('payments', PaymentController::class);
@@ -122,8 +121,8 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
     Route::post('store-advance-utility-payment', [PaymentController::class, 'storeAdvanceUtilityPayment'])->name('store-advance-utility-payment');
     Route::post('/check-utility-payment', [PaymentController::class, 'checkUtilityPayment'])->name('check.utility.payment');
     Route::delete('delete-advance-utility-payment/{id}', [PaymentController::class, 'deleteUtilityAdvancePayment'])->name('delete-advance-utility-payment');
-    Route::get('payment-details/{id}',[InvoiceController::class,'viewInvoiceDetails'])->name('payment-details.show');
-    Route::get('download-utility-invoice/{id}',[InvoiceController::class,'downloadUtilitiesInvoice'])->name('utility-invoice.download');
+    Route::get('payment-details/{id}', [InvoiceController::class, 'viewInvoiceDetails'])->name('payment-details.show');
+    Route::get('download-utility-invoice/{id}', [InvoiceController::class, 'downloadUtilitiesInvoice'])->name('utility-invoice.download');
     Route::get('/invoice/print/{userId}', [InvoiceController::class, 'printInvoice'])->name('invoice.print');
 
 
