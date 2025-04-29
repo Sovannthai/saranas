@@ -189,7 +189,7 @@
                 type: "GET",
                 dataType: "json",
                 success: function(response) {
-                    console.log(response.price);
+                    console.log("Room price:", response.price);
                     if (response.price) {
                         roomPrice = parseFloat(response.price);
                     } else {
@@ -203,6 +203,7 @@
                 }
             });
         }
+
         $('#user_contract_id').on('change', function() {
             var contractId = $(this).val();
             if (contractId) {
@@ -211,12 +212,18 @@
                 });
             }
         });
+
         $('#form_date, #to_date').on('change', function() {
             handleDateChange();
         });
+
         $('#type').on('change', function() {
             toggleAmountField();
+            if ($(this).val() === 'advance') {
+                handleDateChange();
+            }
         });
+
         function handleDateChange() {
             var fromDate = $('#form_date').val();
             var toDate = $('#to_date').val();
@@ -228,15 +235,23 @@
                 if (start <= end) {
                     var totalMonths = getMonthDifference(start, end);
                     var totalPrice = totalMonths * roomPrice;
-                    $('#advance_payment_amount').val(totalPrice.toFixed(2));
+                    console.log("Calculated advance payment:", totalPrice.toFixed(2), 
+                                "months:", totalMonths, "roomPrice:", roomPrice);
+                    
+                    $('#advance_payment_amount').val(totalPrice.toFixed(2)).trigger('change');
+                    
+                    $('#amount').val(totalPrice.toFixed(2));
                 } else {
                     alert('From Date cannot be after To Date.');
-                    $('#advance_payment_amount').val('');
+                    $('#advance_payment_amount').val('0');
+                    $('#amount').val('0');
                 }
             } else {
-                $('#advance_payment_amount').val('');
+                $('#advance_payment_amount').val('0');
+                $('#amount').val('0');
             }
         }
+
         function getMonthDifference(start, end) {
             var yearDiff = end.getFullYear() - start.getFullYear();
             var monthDiff = end.getMonth() - start.getMonth();
@@ -247,7 +262,7 @@
                 totalMonths += 1;
             }
 
-            return totalMonths;
+            return totalMonths > 0 ? totalMonths : 0;
         }
 
         function toggleAmountField() {
@@ -257,6 +272,7 @@
                 $('#advance_payment_amount').closest('.col-sm-6').show();
                 $('#from-date-field').show();
                 $('#to-date-field').show();
+                $('#advance_payment_amount').prop('readonly', true).css('color', 'black');
                 $('#amount').closest('.col-sm-6').hide();
             } else {
                 $('#amount').closest('.col-sm-6').show();
@@ -265,6 +281,8 @@
                 $('#to-date-field').hide();
             }
         }
+
+        // Initialize fields state
         toggleAmountField();
     });
 
