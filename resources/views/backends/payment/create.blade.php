@@ -172,11 +172,11 @@
 
 <script>
     $(document).ready(function() {
-        $(document).on('shown.bs.modal', '.modal', function() {
-            $(this).find('.select2').select2({
-                dropdownParent: $(this)
+        if ($.fn.select2) {
+            $('.select2').select2({
+                dropdownParent: $(".createPaymentModal")
             });
-        });
+        }
     });
 </script>
 <script>
