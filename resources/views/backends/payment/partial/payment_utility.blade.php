@@ -90,7 +90,6 @@
                         month_paid: month_paid
                     },
                     success: function(response) {
-                        console.log(response);
                         var utilityHtml = '';
                         if (response.utility_usage.length > 0) {
                             response.utility_usage.forEach(function(utility) {
@@ -170,7 +169,7 @@
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
-                    if (response.success === 1) {
+                    if (response.success == true) {
                         toastr.success(response.msg);
                         setTimeout(() => {
                             window.location.reload();
@@ -180,7 +179,11 @@
                     }
                 },
                 error: function(xhr) {
-                    toastr.error('An error occurred. Please try again.');
+                    if (xhr.responseJSON) {
+                        toastr.error(xhr.responseJSON.msg || 'An error occurred. Please try again.');
+                    } else {
+                        toastr.error('An error occurred. Please try again.');
+                    }
                     console.error(xhr);
                 }
             });

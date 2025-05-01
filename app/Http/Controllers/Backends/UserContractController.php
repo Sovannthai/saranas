@@ -54,7 +54,7 @@ class UserContractController extends Controller
             $query->where('name', 'User');
         })->whereNotIn('id', $usedUsers)->with('roles')->get();
 
-        $usedRooms = UserContract::pluck('room_id')->toArray();
+        $usedRooms = UserContract::where('status','active')->pluck('room_id')->toArray();
         $availableRooms = Room::where('status', 'available')->whereNotIn('id', $usedRooms)->get();
         $rooms = Room::get();
         $currencySymbol = '$';
@@ -84,6 +84,7 @@ class UserContractController extends Controller
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date'),
                 'monthly_rent' => $room_price->base_price,
+                'status' => 'active',
                 'contract_pdf' => $filePath,
             ]);
             if ($request->input('room_id')) {
@@ -118,6 +119,7 @@ class UserContractController extends Controller
                 'room_id' => $request->input('room_id'),
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date'),
+                'status' => $request->input('status'),
                 'monthly_rent' => $request->input('monthly_rent'),
                 'contract_pdf' => $filePath,
             ]);

@@ -270,7 +270,7 @@ class PaymentController extends Controller
     public function create()
     {
         $payments = Payment::orderBy('id', 'desc')->get();
-        $contracts = UserContract::all();
+        $contracts = UserContract::latest()->where('status', 'active')->get();
         return view('backends.payment.create', compact('payments', 'contracts'));
     }
 
@@ -463,23 +463,23 @@ class PaymentController extends Controller
             $utilityTotals  = $request->input('utility_totals');
 
             $payment = Payment::find($payment_id);
-
             if (!$payment) {
             return response()->json([
-                'error' => 0,
-                'msg' => Lang::get('Invalid payment ID.')
-            ]);
+                'success' => false,
+                'msg' => __('Payment not found'),
+            ], 404);
             }
 
             $start_date = Carbon::parse($payment->start_date);
             $end_date   = Carbon::parse($payment->end_date);
 
             foreach ($utilityIds as $index => $utilityId) {
-
                 $utilityDate = Carbon::create($year_paid, $month_paid, 1);
                 if ($utilityDate->lt($start_date) || $utilityDate->gt($end_date)) {
-                    Session::flash('error', __('The utility payment date is outside the allowed payment period.'));
-                    return redirect()->back();
+                    return response()->json([
+                        'success' => false,
+                        'msg' => __('The utility payment date is outside the allowed payment period.')
+                    ], 422);
                 }
                 $exists = PaymentUtility::where('payment_id', $payment_id)
                     ->where('utility_id', $utilityId)
@@ -487,10 +487,11 @@ class PaymentController extends Controller
                     ->where('year_paid', $year_paid)
                     ->exists();
                 if ($exists) {
-                    Session::flash('error', __('The utility payment of this month is paid already.'));
-                    return redirect()->back();
+                    return response()->json([
+                        'success' => false,
+                        'msg' => __('The utility payment of this month is paid already.')
+                    ], 422);
                 }
-                
                 $rateValue = isset($utilityRates[$index]) 
                     ? $this->formatCurrencyToDecimal($utilityRates[$index]) 
                     : 0;
@@ -514,13 +515,16 @@ class PaymentController extends Controller
                     'total_amount'         => $payment->total_amount + $totalValue,
                 ]);
             }
-            Session::flash('success', __('Utility payment added successfully.'));
-            return redirect()->route('payments.index');
+            return response()->json([
+                'success' => true,
+                'msg' => __('Utility payment added successfully.')
+            ]);
 
         } catch (Exception $e) {
-
-            Session::flash('error', __('Something went wrong: ') . $e->getMessage());
-            return redirect()->route('payments.index');
+            return response()->json([
+                'success' => false,
+                'msg' => __('Something went wrong: ') . $e->getMessage()
+            ], 500);
 
         }
     }
@@ -571,7 +575,7 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {   
         $contracts = UserContract::all();
-        $rooms     = Room::all();
+        $rooms     = Room::latest()->where('status', 'active')->get();
         $users     = User::all();
         
         if (request()->ajax()) {

@@ -78,6 +78,13 @@
                                 </small>
                             @endif
                         </div>
+                        <div class="col-sm-6">
+                            <label for="status">Status</label>
+                            <select name="status" class="form-control select2">
+                                <option value="active" {{ $contract->status == 'active' ?'selected' :'' }}>@lang('Active')</option>
+                                <option value="inactive" {{ $contract->status == 'inactive' ? 'selected' :'' }}>@lang('Inactive')</option>
+                            </select>
+                        </div>
                         @if ($contract->contract_pdf)
                             @if (strtolower($fileExtension) === 'pdf')
                                 <div class="col-12 mt-2">

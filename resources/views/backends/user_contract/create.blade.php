@@ -38,6 +38,13 @@
                             <label for="contract_pdf">@lang('Contract PDF')</label>
                             <input type="file" name="contract_pdf" class="form-control" required>
                         </div>
+                        <div class="col-sm-6">
+                            <label for="status">Status</label>
+                            <select name="status" class="form-control select2">
+                                <option value="active">@lang('Active')</option>
+                                <option value="inactive">@lang('Inactive')</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="mt-2">
                         <button type="submit" class="btn btn-outline-primary btn-sm text-uppercase float-right ml-2">

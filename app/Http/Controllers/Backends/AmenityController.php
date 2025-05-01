@@ -101,9 +101,9 @@ class AmenityController extends Controller
      */
     public function update(UpdateAmenityRequest $request, CurrencyService $currencyService, $id)
     {
-        $amenity = Amenity::find($id);
-        $amenity->name = $request->input('name');
-        $amenity->description = $request->input('description');
+        $amenity                   = Amenity::find($id);
+        $amenity->name             = $request->input('name');
+        $amenity->description      = $request->input('description');
         $amenity->additional_price = $currencyService->convertCurrency($request->input('additional_price'));
         $amenity->save();
 
@@ -143,6 +143,9 @@ class AmenityController extends Controller
             $status = $request->input('status') === 'true' ? "1" : "0";
             $amenity = Amenity::findOrFail($request->input('id'));
             $amenity->status = $status;
+            if ($amenity->status == 0) {
+                $amenity->rooms()->detach();
+            }
             $amenity->save();
             $output = [
                 'success' => 1,

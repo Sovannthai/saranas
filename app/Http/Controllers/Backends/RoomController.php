@@ -85,6 +85,8 @@ class RoomController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      */
     public function update(Request $request, $id)
     {
@@ -95,6 +97,9 @@ class RoomController extends Controller
             $room->size = $request->input('size');
             $room->floor = $request->input('floor');
             $room->status = $request->input('status');
+            if($room->status == 'available') {
+                $room->userContracts()->update(['status' => 'inactive']);
+            }
             $room->save();
             if ($request->has('amenity_id')) {
                 $room->amenities()->sync($request->input('amenity_id'));
@@ -103,7 +108,6 @@ class RoomController extends Controller
             Session::flash('success', __('Room updated successfully.'));
             return redirect()->route('rooms.index');
         } catch (Exception $e) {
-            dd($e);
             Session::flash('error', __('An error occurred while updating room.'));
             return redirect()->route('rooms.index');
         }

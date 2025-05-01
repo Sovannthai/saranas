@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreMonthlyUsageRequest;
 use App\Http\Requests\UpdateMonthlyUsageRequest;
+use App\Models\Payment;
 
 class MonthlyUsageController extends Controller
 {
@@ -26,8 +27,8 @@ class MonthlyUsageController extends Controller
 
     public function show($roomId)
     {
-        if(!auth()->user()->can('view usagedetails')){
-            abort(403,'Unauthorized action.');
+        if (!auth()->user()->can('view usagedetails')) {
+            abort(403, 'Unauthorized action.');
         }
 
         $room = Room::findOrFail($roomId);
@@ -123,6 +124,19 @@ class MonthlyUsageController extends Controller
     {
         try {
             $roomId = $monthlyUsage->room_id;
+            $existingContract = $monthlyUsage->room->userContracts()->where('status', 'inactive')->first();
+            if ($existingContract != null) {
+                Session::flash('error', __('Cannot delete monthly usage with Inactive user contracts.'));
+                return redirect()->route('monthly_usages.show', $roomId);
+            }
+
+            $contract = $monthlyUsage->room->userContracts()->where('status', 'active')->first();
+            $existingUsages = Payment::where('user_contract_id', $contract->id)->count();
+            if ($existingUsages > 0) {
+                Session::flash('error', __('Cannot delete monthly usage with existing recorde.'));
+                return redirect()->route('monthly_usages.show', $roomId);
+            }
+            
             $monthlyUsage->delete();
             Session::flash('success', __('Monthly usage deleted successfully.'));
         } catch (\Exception $e) {
