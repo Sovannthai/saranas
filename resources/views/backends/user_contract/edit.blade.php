@@ -45,7 +45,7 @@
                         <div class="col-sm-6">
                             <label for="end_date">@lang('End Date')</label>
                             <input type="date" name="end_date" class="form-control"
-                                value="{{ $contract->end_date }}" required>
+                                value="{{ $contract->end_date }}">
                         </div>
                         <div class="col-sm-6">
                             <label for="contract_pdf">@lang('Contract PDF')</label>
