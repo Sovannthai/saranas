@@ -83,7 +83,7 @@ class UserContractController extends Controller
                 'room_id' => $request->input('room_id'),
                 'start_date' => $request->input('start_date'),
                 'end_date' => $request->input('end_date'),
-                'monthly_rent' => $room_price->base_price,
+                'monthly_rent' => $room_price->base_price ?? 0,
                 'status' => 'active',
                 'contract_pdf' => $filePath,
             ]);
@@ -94,6 +94,7 @@ class UserContractController extends Controller
             }
             return redirect()->route('user_contracts.index')->with('success', 'User contract created successfully.');
         } catch (Exception $e) {
+            dd($e);
             return back()->withErrors(['error' => 'An error occurred while creating the contract.'])->withInput();
         }
     }

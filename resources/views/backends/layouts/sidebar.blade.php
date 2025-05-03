@@ -77,6 +77,14 @@
                     </div>
                 </li>
                 @endif
+                @if(auth()->user()->can('view amenity'))
+                <li class="nav-item @if (Route::is('amenities.index')) active @endif">
+                    <a href="{{ route('amenities.index') }}">
+                        <i class="fas fa-couch"></i>
+                        <p>@lang('Amenities Management')</p>
+                    </a>
+                </li>
+                @endif
                 @if(auth()->user()->can('view room'))
                 <li class="nav-item">
                     <a data-toggle="collapse" href="#room-management" @if (Route::is('rooms.*') ||
@@ -104,20 +112,7 @@
                     </div>
                 </li>
                 @endif
-                @if(auth()->user()->can('view amenity'))
-                <li class="nav-item @if (Route::is('amenities.index')) active @endif">
-                    <a href="{{ route('amenities.index') }}">
-                        <i class="fas fa-couch"></i>
-                        <p>@lang('Amenities Management')</p>
-                    </a>
-                </li>
-                @endif
-                {{-- <li class="nav-item @if (Route::is('utilities.index')) active @endif">
-                    <a href="{{ route('utilities.index') }}">
-                        <i class="fas fa-plug"></i>
-                        <p>@lang('Utilities Management')</p>
-                    </a>
-                </li> --}}
+                
                 @can('view utility')
                 <li class="nav-item">
                     <a data-toggle="collapse" href="#Utilities" @if (Route::is('utilities.*') ||
