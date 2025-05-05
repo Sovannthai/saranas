@@ -33,6 +33,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $contract->user->name }}</td>
+                                <td>{{ $contract->room->room_number }}</td>
                                 <td>
                                     @if ($contract->status == 'active')
                                         <span class="badge badge-success">@lang('Active')</span>
@@ -40,7 +41,6 @@
                                         <span class="badge badge-danger">@lang('Inactive')</span>
                                     @endif
                                 </td>
-                                <td>{{ $contract->room->room_number }}</td>
                                 <td>{{ $contract->start_date }}</td>
                                 <td>{{ $contract->end_date ?? '-' }}</td>
                                 <td>{{ $currencySymbol }} {{ number_format($contract->monthly_rent, 2) }}</td>
