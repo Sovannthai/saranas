@@ -332,10 +332,16 @@
                     return `${row.user_contract.user.name || 'N/A'} (${row.user_contract.room.room_number || 'N/A'})`;
                 }
             },
-            { data: 'total_amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$0.00' },
-            { data: 'amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$0.00' },
-            { data: 'total_due_amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$0.00' },
-            { data: 'type', className: 'text-capitalize' },
+            { data: 'total_amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$ 0.00' },
+            { data: 'amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$ 0.00' },
+            { data: 'total_due_amount', render: data => data ? `$ ${parseFloat(data).toFixed(2)}` : '$ 0.00' },
+            { 
+                data: 'type', 
+                className: 'text-capitalize',
+                render: function(data) {
+                    return data ? data.replace(/_/g, ' ') : '';
+                }
+            },
             {
                 data: 'month_paid',
                 render: function(data) {

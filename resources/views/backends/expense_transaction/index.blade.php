@@ -137,7 +137,13 @@
         columns: [
             { data: "id", name: "id", render: (data, type, row, meta) => meta.row + 1 },
             { data: "category.title", name: "category.title" },
-            { data: "amount", name: "amount" },
+            { 
+                data: "amount", 
+                name: "amount",
+                render: function(data) {
+                    return '$ ' + parseFloat(data).toFixed(2);
+                }
+            },
             { data: "date", name: "date" },
             { data: "note", name: "note" },
             {

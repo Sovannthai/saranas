@@ -62,7 +62,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category text-dark">@lang('Total Income')</p>
-                                    <h4 class="card-title">{{ $totalIncome }}</h4>
+                                    <h4 class="card-title">$ {{ number_format($totalIncome,2) }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category text-dark">@lang('Total Expenses')</p>
-                                    <h4 class="card-title">${{ number_format($totalExpense, 2) }}</h4>
+                                    <h4 class="card-title">$ {{ number_format($totalExpense, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category text-dark">@lang('Balance')</p>
-                                    <h4 class="card-title">${{ number_format($balance, 2) }}</h4>
+                                    <h4 class="card-title">$ {{ number_format($balance, 2) }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                                             <span class="text-muted d-block small">({{ $transaction->date }})</span>
                                         </div>
                                         <span class="badge bg-success text-white fs-6">
-                                            ${{ number_format($transaction->amount, 2) }}
+                                            $ {{ number_format($transaction->amount, 2) }}
                                         </span>
                                     </li>
                                 @endforeach
