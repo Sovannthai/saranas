@@ -161,7 +161,7 @@
                             <option value="all_paid" {{ $payment->type == 'all_paid' ? 'selected' : '' }}>@lang('Paid for All')</option>
                             <option value="rent" {{ $payment->type == 'rent' ? 'selected' : '' }}>@lang('Rent')</option>
                             <option value="utility" {{ $payment->type == 'utility' ? 'selected' : '' }}>@lang('Utility')</option>
-                            <option value="advance" {{ $payment->type == 'advance' ? 'selected' : '' }}>@lang('Advance')</option>
+                            {{-- <option value="advance" {{ $payment->type == 'advance' ? 'selected' : '' }}>@lang('Advance')</option> --}}
                         </select>
                     </div>
                     <div class="col-sm-6">
