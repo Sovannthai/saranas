@@ -78,7 +78,8 @@
             .invoice-table td {
                 font-size: 12px;
             }
-            .footer-invoice{
+
+            .footer-invoice {
                 margin-top: 40px;
                 text-align: center;
             }
@@ -137,50 +138,50 @@
             <tr>
                 <td><strong>@lang('Room'):</strong> {{ @$invoiceData->userContract->room->room_number }}
                     @if ($invoiceData->paymentAmenities)
-                    <div style="margin-left: 15px;">
-                        @foreach ($invoiceData->paymentAmenities as $amenity)
-                        <li>{{ $amenity->amenity->name }}</li>
-                        @endforeach
-                    </div>
+                        <div style="margin-left: 15px;">
+                            @foreach ($invoiceData->paymentAmenities as $amenity)
+                                <li>{{ $amenity->amenity->name }}</li>
+                            @endforeach
+                        </div>
                     @endif
                 </td>
                 @if ($invoiceData->type == 'advance')
-                <td>{{ $invoiceData->start_date }} - {{ $invoiceData->end_date }}</td>
+                    <td>{{ $invoiceData->start_date }} - {{ $invoiceData->end_date }}</td>
                 @endif
                 @php
-                $months = [
-                1 => 'January',
-                2 => 'February',
-                3 => 'March',
-                4 => 'April',
-                5 => 'May',
-                6 => 'June',
-                7 => 'July',
-                8 => 'August',
-                9 => 'September',
-                10 => 'October',
-                11 => 'November',
-                12 => 'December',
-                ];
+                    $months = [
+                        1 => 'January',
+                        2 => 'February',
+                        3 => 'March',
+                        4 => 'April',
+                        5 => 'May',
+                        6 => 'June',
+                        7 => 'July',
+                        8 => 'August',
+                        9 => 'September',
+                        10 => 'October',
+                        11 => 'November',
+                        12 => 'December',
+                    ];
                 @endphp
-                @if($invoiceData->type != 'advance')
-                <td>{{ $invoiceData->month_paid ? $months[$invoiceData->month_paid] : '-' }}
-                    ({{ $invoiceData->year_paid }})</td>
+                @if ($invoiceData->type != 'advance')
+                    <td>{{ $invoiceData->month_paid ? $months[$invoiceData->month_paid] : '-' }}
+                        ({{ $invoiceData->year_paid }})</td>
                 @endif
-                <td>$ {{ number_format($invoiceData->total_amount_before_discount, 2) }}</td>
-                <td>$ {{ number_format($invoiceData->total_amount_before_discount, 2) }}</td>
+                <td>$ {{ number_format($total_price, 2) }}</td>
+                <td>$ {{ number_format($total_price, 2) }}</td>
             </tr>
             @if ($invoiceData->total_discount > 0)
-            <tr>
-                <td colspan="3" style="text-align: right;"><strong>Discount</strong></td>
-                <td>
-                    @if ($invoiceData->discount_type == 'amount')
-                    <span>$</span> {{ $invoiceData->total_discount }}
-                    @else
-                    <span>%</span> {{ $invoiceData->total_discount }}
-                    @endif
-                </td>
-            </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;"><strong>Discount</strong></td>
+                    <td>
+                        @if ($invoiceData->discount_type == 'amount')
+                            <span>$</span> {{ $invoiceData->total_discount }}
+                        @else
+                            <span>%</span> {{ $invoiceData->total_discount }}
+                        @endif
+                    </td>
+                </tr>
             @endif
             <?php
             $totalRoomPrice = 0;
@@ -197,14 +198,14 @@
                 <td>$ {{ number_format($totalRoomPrice, 2) }}</td>
             </tr>
             @if ($invoiceData->paymentUtilities)
-            @foreach ($invoiceData->paymentUtilities as $utility)
-            <tr>
-                <td colspan="2" style="text-align: right;"><strong>{{ @$utility->utility->type }}</strong>
-                </td>
-                <td>{{ $utility->usage }} ($ {{ number_format($utility->rate_per_unit, 2) }})</td>
-                <td>$ {{ number_format($utility->total_amount, 2) }}</td>
-            </tr>
-            @endforeach
+                @foreach ($invoiceData->paymentUtilities as $utility)
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>{{ @$utility->utility->type }}</strong>
+                        </td>
+                        <td>{{ $utility->usage }} ($ {{ number_format($utility->rate_per_unit, 2) }})</td>
+                        <td>$ {{ number_format($utility->total_amount, 2) }}</td>
+                    </tr>
+                @endforeach
             @endif
             <tr>
                 <td colspan="3" style="text-align: right;"><strong>@lang('Total Amount')</strong></td>
@@ -215,10 +216,10 @@
                 <td>$ {{ number_format($invoiceData->amount, 2) }}</td>
             </tr>
             @if ($invoiceData->total_due_amount)
-            <tr>
-                <td colspan="3" style="text-align: right;"><strong>@lang('Due Amount')</strong></td>
-                <td>$ {{ number_format($invoiceData->total_due_amount, 2) }}</td>
-            </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right;"><strong>@lang('Due Amount')</strong></td>
+                    <td>$ {{ number_format($invoiceData->total_due_amount, 2) }}</td>
+                </tr>
             @endif
         </table>
         {{-- <div class="row flex-between">

@@ -10,6 +10,7 @@ use App\Helpers\PdfGenerator;
 use App\Notifications\InvoicePaid;
 use Barryvdh\DomPDF\Facade as PDF;
 use App\Http\Controllers\Controller;
+use App\Models\PriceAdjustment;
 use App\Models\UserContract;
 use GuzzleHttp\Exception\RequestException;
 
@@ -173,14 +174,16 @@ protected function sendTelegramPdf($telegramId, $pdfPath)
 
     public function printInvoice($userId)
     {
-        $user = User::findOrFail($userId);
-        $contract = UserContract::where('user_id', $user->id)->first();
+        $user        = User::findOrFail($userId);
+        $contract    = UserContract::where('user_id', $user->id)->first();
         $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')
             ->where('user_contract_id', $contract->id)
             ->latest()
             ->first();
-
-        return view('backends.invoice._invoice_slim', compact('user', 'invoiceData'));
+        $room_price     = $contract->room->roomPricing->sum('base_price');
+        $amenitie_price = $contract->room->amenities->sum('additional_price');
+        $total_price    = $room_price + $amenitie_price;
+        return view('backends.invoice._invoice_slim', compact('user', 'invoiceData','total_price'));
     }
     public function downloadUtilitiesInvoice($userId)
     {
