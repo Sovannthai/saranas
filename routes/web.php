@@ -124,6 +124,7 @@ Route::middleware(['auth', SetSessionData::class, Localization::class, SetLocale
     Route::get('payment-details/{id}', [InvoiceController::class, 'viewInvoiceDetails'])->name('payment-details.show');
     Route::get('download-utility-invoice/{id}', [InvoiceController::class, 'downloadUtilitiesInvoice'])->name('utility-invoice.download');
     Route::get('/invoice/print/{userId}', [InvoiceController::class, 'printInvoice'])->name('invoice.print');
+    Route::put('update-due-amount/{id}',[PaymentController::class,'updateDueAmount'])->name('update.due.amount');
 
 
     Route::resource('user_contracts', UserContractController::class);

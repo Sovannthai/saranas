@@ -62,10 +62,11 @@
     <div class="card-header">
         <label class="card-title font-weight-bold mb-1 text-uppercase">@lang('Payments Management')</label>
         @can('create payment')
-        <a class="btn btn-primary float-right text-uppercase btn-sm btn-modal btn-add"
+        {{-- <a class="btn btn-primary float-right text-uppercase btn-sm btn-modal btn-add"
             data-href="{{ route('payments.create') }}" data-toggle="modal" data-container=".createPaymentModal">
             <i class="fas fa-plus"></i> {{ __('Add New') }}
-        </a>
+        </a> --}}
+        <a href="{{ route('payments.create') }}" class="btn btn-primary btn-sm text-uppercase float-right">Add New</a>
         @endcan
     </div>
     <div class="card-body">
@@ -253,9 +254,7 @@
                                     </a>
                                 </li>
                                 <li class="mb-1">
-                                    <a class="btn float-right btn-sm dropdown-item btn-modal btn-add" href="#"
-                                        data-href="${editUrl}"
-                                        data-bs-toggle="modal" data-container=".editPaymentModal">
+                                    <a class="btn float-right btn-sm dropdown-item" href="${editUrl}">
                                         <i class="fas fa-edit"></i> @lang('Edit Payment')
                                     </a>
                                 </li>

@@ -165,11 +165,13 @@ protected function sendTelegramPdf($telegramId, $pdfPath)
     }
     public function viewInvoiceDetails($userId)
     {
-        $user = User::findOrFail($userId);
-        $contract = UserContract::where('user_id', $user->id)->first();
+        $user        = User::findOrFail($userId);
+        $contract    = UserContract::where('user_id', $user->id)->first();
         $invoiceData = Payment::with('paymentamenities', 'userContract', 'paymentutilities')->where('user_contract_id', $contract->id)->latest()->first();
-
-        return view('backends.payment.partial.payment_details', compact('user', 'invoiceData'));
+        $room_price     = $contract->room->roomPricing->sum('base_price');
+        $amenitie_price = $contract->room->amenities->sum('additional_price');
+        $total_price    = $room_price + $amenitie_price;
+        return view('backends.payment.partial.payment_details', compact('user', 'invoiceData', 'total_price', 'amenitie_price'));
     }
 
     public function printInvoice($userId)

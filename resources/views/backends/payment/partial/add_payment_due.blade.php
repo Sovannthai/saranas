@@ -8,7 +8,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('payments.update', ['payment' => $payment->id]) }}" method="POST">
+                    <form action="{{ route('update.due.amount', ['id' => $payment->id]) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="befor_paid_amount" value="{{ $payment->amount }}">
@@ -19,17 +19,20 @@
                             <div class="col-sm-6">
                                 <label for="paid_due_amount">@lang('Total Due')</label>
                                 <input type="number" step="any" min="0.00" class="form-control"
-                                    id="paid_due_amount" name="paid_due_amount"
-                                    value="{{ $payment->total_due_amount }}" readonly style="color: black">
+                                    id="paid_due_amount" name="paid_due_amount" value="{{ $payment->total_due_amount }}"
+                                    readonly style="color: black">
                             </div>
                             <div class="col-sm-6">
                                 <label for="due_type">@lang('Due Type')</label>
                                 @if ($payment->type == 'rent')
-                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled style="color: black" value="Utility">
+                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled
+                                        style="color: black" value="Utility">
                                 @elseif($payment->type == 'utility')
-                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled style="color: black" value="Rent">
+                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled
+                                        style="color: black" value="Rent">
                                 @else
-                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled style="color: black" value="All Paid">
+                                    <input type="text" class="form-control" id="due_type" name="due_type" disabled
+                                        style="color: black" value="All Paid">
                                 @endif
                             </div>
                             <div class="col-sm-12">
@@ -40,7 +43,8 @@
                             </div>
                         </div>
                         <div class="mt-2">
-                            <button type="submit" class="btn btn-primary btn-sm float-right mb-2 ml-1">@lang('Submit')</button>
+                            <button type="submit"
+                                class="btn btn-primary btn-sm float-right mb-2 ml-1">@lang('Submit')</button>
                             <button type="button" class="btn btn-dark btn-sm float-right"
                                 data-bs-dismiss="modal">@lang('Close')</button>
                         </div>
