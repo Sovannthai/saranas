@@ -619,7 +619,7 @@ class PaymentController extends Controller
                     'total_due_amount' => $last_due_amount,
                     'payment_status'   => $status,
                     'type'             => $type,
-                    'payment_date'     => $request->payment_date,
+                    'payment_date'     => $request->payment_date ?? Carbon::now(),
                     'month_paid'       => $request->month_paid,
                     'year_paid'        => $request->year_paid,
                 ]);
