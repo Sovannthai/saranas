@@ -133,7 +133,7 @@
                             <option value="all_paid">@lang('Paid for All')</option>
                             <option value="rent">@lang('Rent')</option>
                             <option value="utility">@lang('Utility')</option>
-                            <option value="advance">@lang('Advance')</option>
+                            {{-- <option value="advance">@lang('Advance')</option> --}}
                         </select>
                     </div>
                     <div class="col-sm-6">
