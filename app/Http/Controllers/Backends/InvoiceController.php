@@ -183,7 +183,7 @@ protected function sendTelegramPdf($telegramId, $pdfPath)
         $room_price     = $contract->room->roomPricing->sum('base_price');
         $amenitie_price = $contract->room->amenities->sum('additional_price');
         $total_price    = $room_price + $amenitie_price;
-        return view('backends.invoice._invoice_slim', compact('user', 'invoiceData','total_price'));
+        return view('backends.invoice._invoice_slim', compact('user', 'invoiceData','total_price','amenitie_price'));
     }
     public function downloadUtilitiesInvoice($userId)
     {
