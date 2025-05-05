@@ -168,7 +168,7 @@
                     <td>{{ $invoiceData->month_paid ? $months[$invoiceData->month_paid] : '-' }}
                         ({{ $invoiceData->year_paid }})</td>
                 @endif
-                <td>$ {{ number_format($total_price, 2) }}</td>
+                <td>$ {{ number_format($amenitie_price, 2) }}</td>
                 <td>$ {{ number_format($total_price, 2) }}</td>
             </tr>
             @if ($invoiceData->total_discount > 0)
