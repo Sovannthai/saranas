@@ -359,17 +359,15 @@
             let amountPaid = 0;
             let totalDueAmount = 0;
 
-            api.column(6).data().each(function(value) {
-                totalPayment += parseFloat(value) || 0;
+            api.rows({ page: 'current' }).data().each(function(row) {
+            totalPayment   += parseFloat(row.total_amount) || 0;
+            amountPaid     += parseFloat(row.amount) || 0;
+            totalDueAmount += parseFloat(row.total_due_amount) || 0;
             });
 
-            api.column(7).data().each(function(value) {
-                amountPaid += parseFloat(value) || 0;
-            });
-
-            api.column(8).data().each(function(value) {
-                totalDueAmount += parseFloat(value) || 0;
-            });
+            $(api.column(5).footer()).html(`Current Page Total: $ ${totalPayment.toFixed(2)}`);
+            $(api.column(6).footer()).html(`Current Page Paid: $ ${amountPaid.toFixed(2)}`);
+            $(api.column(7).footer()).html(`Current Page Due: $ ${totalDueAmount.toFixed(2)}`);
         }
     });
 

@@ -209,17 +209,21 @@
                     let amountPaid = 0;
                     let totalDueAmount = 0;
 
-                    api.column(4).data().each(function(value) {
+                    api.column(4, {page: 'current'}).data().each(function(value) {
                         totalPayment += parseFloat(value) || 0;
                     });
 
-                    api.column(5).data().each(function(value) {
+                    api.column(5, {page: 'current'}).data().each(function(value) {
                         amountPaid += parseFloat(value) || 0;
                     });
 
-                    api.column(6).data().each(function(value) {
+                    api.column(6, {page: 'current'}).data().each(function(value) {
                         totalDueAmount += parseFloat(value) || 0;
                     });
+
+                    $('#total-payment').text('$ ' + totalPayment.toFixed(2));
+                    $('#amount-paid').text('$ ' + amountPaid.toFixed(2));
+                    $('#total-due-amount').text('$ ' + totalDueAmount.toFixed(2));
                 },
                 pageLength: 10,
                 lengthMenu: [5, 10, 20, 50, 100],

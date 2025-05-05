@@ -145,7 +145,13 @@
                 }
             },
             { data: "date", name: "date" },
-            { data: "note", name: "note" },
+            { 
+                data: "note", 
+                name: "note",
+                render: function(data) {
+                    return data ? (data.length > 35 ? data.substring(0, 35) + '...' : data) : '--';
+                }
+            },
             {
                 data: "id",
                 name: "id",
