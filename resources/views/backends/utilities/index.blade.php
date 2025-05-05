@@ -222,7 +222,7 @@
                                     const id = this.dataset.id;
                                     updateStatus(id, status);
                                 });
-                            });
+                            }); 
                         }
                         // Handle switch toggle event
                         document.querySelectorAll('.status-toggle').forEach(switchElement => {

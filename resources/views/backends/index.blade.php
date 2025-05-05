@@ -168,7 +168,7 @@
         </a>
     </div>
 
-    <div class="col-sm-6 col-md-3">
+    <div class="col-sm-6 col-md-3" hidden>
         <a href="{{ route('user-request.index') }}">
             <div class="card card-stats card-round">
                 <div class="card-body">
