@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\StoreMonthlyUsageRequest;
 use App\Http\Requests\UpdateMonthlyUsageRequest;
+use App\Models\MonthlyUsageDetail;
 use App\Models\Payment;
 
 class MonthlyUsageController extends Controller
@@ -131,15 +132,29 @@ class MonthlyUsageController extends Controller
             }
 
             $contract = $monthlyUsage->room->userContracts()->where('status', 'active')->first();
-            $existingUsages = Payment::where('user_contract_id', $contract->id)->count();
+            $monthlyUsageDetails = MonthlyUsageDetail::where('monthly_usage_id', $monthlyUsage->id)->get();
+
+            $utilityTypeIds = $monthlyUsageDetails->pluck('utility_type_id')->toArray();
+            $existingUsages = Payment::where('user_contract_id', $contract->id)
+                ->whereHas('paymentutilities', function ($query) use ($utilityTypeIds) {
+                    $query->whereIn('utility_id', $utilityTypeIds);
+                })
+                ->where('month_paid', $monthlyUsage->month)
+                ->where('year_paid', $monthlyUsage->year)
+                ->count();
             if ($existingUsages > 0) {
+                Session::flash('error', __('Cannot delete monthly usage with existing payment records.'));
+                return redirect()->route('monthly_usages.show', $roomId);
+            }
+            if ($existingUsages != 0) {
                 Session::flash('error', __('Cannot delete monthly usage with existing recorde.'));
                 return redirect()->route('monthly_usages.show', $roomId);
             }
-            
+
             $monthlyUsage->delete();
             Session::flash('success', __('Monthly usage deleted successfully.'));
         } catch (\Exception $e) {
+            dd($e);
             Session::flash('error', __('Failed to delete monthly usage.'));
         }
         return redirect()->route('monthly_usages.show', $roomId);
