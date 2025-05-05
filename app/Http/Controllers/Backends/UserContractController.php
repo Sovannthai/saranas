@@ -114,14 +114,14 @@ class UserContractController extends Controller
                     $filePath = $this->uploadImage($file);
                 }
             }
-
+            $room_price = RoomPricing::where('room_id',$request->input('room_id'))->latest()->first();
             $contract->update([
-                'user_id' => $request->input('user_id'),
-                'room_id' => $request->input('room_id'),
-                'start_date' => $request->input('start_date'),
-                'end_date' => $request->input('end_date'),
-                'status' => $request->input('status'),
-                'monthly_rent' => $request->input('monthly_rent'),
+                'user_id'     => $request->input('user_id'),
+                'room_id'     => $request->input('room_id'),
+                'start_date'  => $request->input('start_date'),
+                'end_date'    => $request->input('end_date'),
+                'status'      => $request->input('status'),
+                'monthly_rent' => $room_price->base_price ?? 0,
                 'contract_pdf' => $filePath,
             ]);
             if ($request->input('room_id')) {
