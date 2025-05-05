@@ -377,9 +377,7 @@
 });
 </script>
 <script>
-    // Initialize modals when they're loaded
     $(document).on('shown.bs.modal', '.editPaymentModal', function() {
-        // Reinitialize select2 in modal
         if ($.fn.select2) {
             $(this).find('.select2').select2({
                 dropdownParent: $(this)
@@ -387,7 +385,6 @@
         }
     });
     
-    // Initialize toastr (if not already initialized)
     if (typeof toastr !== 'undefined') {
         toastr.options = {
             closeButton: true,

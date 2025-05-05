@@ -6,18 +6,10 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
-use RealRashid\SweetAlert\Facades\Alert;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
-    // function __construct()
-    // {
-    //     $this->middleware('permission:show role', ['only' => ['show', 'index']]);
-    //     $this->middleware('permission:create role', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:update role', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete role', ['only' => ['destroy']]);
-    // }
     public function index()
     {
         $roles = Role::paginate(10);
@@ -25,9 +17,11 @@ class RoleController extends Controller
     }
     public function create()
     {
-        $permissions = Permission::get()->groupBy(function ($data) {
-            return $data->module;
-        });
+        $permissions = Permission::where('name', '!=', 'view chat')
+            ->get()
+            ->groupBy(function ($data) {
+                return $data->module;
+            });
         return view('backends.role.create', compact('permissions'));
     }
 
@@ -65,9 +59,11 @@ class RoleController extends Controller
     public function edit($id)
     {
         $role = Role::with('permissions')->find($id);
-        $permissions = Permission::get()->groupBy(function ($data) {
-            return $data->module;
-        });
+        $permissions = Permission::where('name', '!=', 'view chat')
+            ->get()
+            ->groupBy(function ($data) {
+                return $data->module;
+            });
         $rolePermissions = [];
         foreach ($role->permissions as $rolePerm) {
             $rolePermissions[] = $rolePerm->name;

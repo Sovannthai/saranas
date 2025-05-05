@@ -198,14 +198,14 @@
                         </div>
                     </li>
                 @endcan
-                @can('view chat')
+                {{-- @can('view chat')
                     <li class="nav-item @if (Route::is('user-request.index')) active @endif">
                         <a href="{{ route('user-request.index') }}">
                             <i class="fas fa-comments"></i>
                             <p>@lang('Chat')</p><span class="badge badge-danger">{{ $unreadMessagesCount }}</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
                 @can('view report')
                     <li class="nav-item">
                         <a data-toggle="collapse" href="#reports"
