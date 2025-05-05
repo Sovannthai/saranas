@@ -365,9 +365,9 @@
             totalDueAmount += parseFloat(row.total_due_amount) || 0;
             });
 
-            $(api.column(5).footer()).html(`Current Page Total: $ ${totalPayment.toFixed(2)}`);
-            $(api.column(6).footer()).html(`Current Page Paid: $ ${amountPaid.toFixed(2)}`);
-            $(api.column(7).footer()).html(`Current Page Due: $ ${totalDueAmount.toFixed(2)}`);
+            $(api.column(5).footer()).html(`Total Amount: $ ${totalPayment.toFixed(2)}`);
+            $(api.column(6).footer()).html(`Total Paid: $ ${amountPaid.toFixed(2)}`);
+            $(api.column(7).footer()).html(`Total Due: $ ${totalDueAmount.toFixed(2)}`);
         }
     });
 
